@@ -39,7 +39,8 @@ public class HomePage extends javax.swing.JFrame {
             new Anime("Spy x Family", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo2.mp4"),
             new Anime("Demon Slayer", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo3.mp4"),
             new Anime("One Piece", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo4.mp4"),
-            new Anime("Jujutsu Kaisen", "", "D:/Video/jjk.mp4")
+            new Anime("Jujutsu Kaisen", "", "D:/Video/jjk.mp4"),
+            new Anime("Kaichou Wa Maid Sama", "", "C:\\Users\\Hype GLK\\OneDrive\\Dokumen\\NetBeansProjects\\Clone\\Ranime\\Kaichou wa maid sama.mp4")
         };
 
         // 2. Looping untuk mencetak kotak UI satu per satu
@@ -101,8 +102,8 @@ public class HomePage extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        btnbookmark = new javax.swing.JLabel();
+        btnhistory = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelKatalog = new javax.swing.JPanel();
@@ -111,15 +112,30 @@ public class HomePage extends javax.swing.JFrame {
         setTitle("Home Page");
         setResizable(false);
 
-        jPanel1.setBackground(new java.awt.Color(204, 204, 255));
+        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Logo");
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 0, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("Home");
 
-        jLabel3.setText("Bookmarks");
+        btnbookmark.setForeground(new java.awt.Color(255, 255, 255));
+        btnbookmark.setText("Bookmarks");
+        btnbookmark.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnbookmarkMouseClicked(evt);
+            }
+        });
 
-        jLabel4.setText("Watched");
+        btnhistory.setForeground(new java.awt.Color(255, 255, 255));
+        btnhistory.setText("Watched");
+        btnhistory.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnhistoryMouseClicked(evt);
+            }
+        });
 
         btnLogout.setText("Logout");
         btnLogout.addActionListener(this::btnLogoutActionPerformed);
@@ -129,14 +145,14 @@ public class HomePage extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
+                .addGap(32, 32, 32)
                 .addComponent(jLabel1)
-                .addGap(65, 65, 65)
-                .addComponent(jLabel2)
                 .addGap(64, 64, 64)
-                .addComponent(jLabel3)
-                .addGap(79, 79, 79)
-                .addComponent(jLabel4)
+                .addComponent(btnbookmark)
+                .addGap(64, 64, 64)
+                .addComponent(btnhistory)
+                .addGap(441, 441, 441)
+                .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnLogout)
                 .addGap(14, 14, 14))
@@ -148,14 +164,15 @@ public class HomePage extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
+                    .addComponent(btnbookmark)
+                    .addComponent(btnhistory)
                     .addComponent(btnLogout))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
         jScrollPane1.setHorizontalScrollBar(null);
 
+        panelKatalog.setBackground(new java.awt.Color(255, 255, 204));
         panelKatalog.setPreferredSize(new java.awt.Dimension(1320, 700));
         panelKatalog.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 28, 28));
         jScrollPane1.setViewportView(panelKatalog);
@@ -175,7 +192,7 @@ public class HomePage extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 634, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -194,6 +211,18 @@ public class HomePage extends javax.swing.JFrame {
             new LoginForm().setVisible(true);
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnhistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnhistoryMouseClicked
+        // TODO add your handling code here:
+        this.dispose(); // tutup register                           
+        new Watched().setVisible(true); // buka form watched
+    }//GEN-LAST:event_btnhistoryMouseClicked
+
+    private void btnbookmarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnbookmarkMouseClicked
+        // TODO add your handling code here:
+        this.dispose(); // tutup register                           
+        new Bookmarks().setVisible(true); // buka form login
+    }//GEN-LAST:event_btnbookmarkMouseClicked
 
     /**
      * @param args the command line arguments
@@ -222,10 +251,10 @@ public class HomePage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnLogout;
+    private javax.swing.JLabel btnbookmark;
+    private javax.swing.JLabel btnhistory;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelKatalog;

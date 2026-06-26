@@ -73,11 +73,20 @@ public class PlayPage extends javax.swing.JFrame {
 
     private void siapkanVideo() {
         try {
-            File fileVideo = new File(urlVideo);
+            File fileVideo = new File(urlVideo);            
+            
+            // Cek di mana Java saat ini "berdiri" (Working Directory)
+            System.out.println("Working Directory: " + System.getProperty("user.dir"));
+
+            // Cek apakah file benar-benar ada di alamat tersebut
+            java.io.File f = new java.io.File(urlVideo);
+            System.out.println("Mencari file di: " + f.getAbsolutePath());
+            System.out.println("Ketemu? " + f.exists());
+            
             Media media = new Media(fileVideo.toURI().toString());
             mediaPlayer = new MediaPlayer(media);
             MediaView mediaView = new MediaView(mediaPlayer);
-
+            
             StackPane root = new StackPane();
             root.setStyle("-fx-background-color: black;"); // Background hitam sinematik
             root.getChildren().add(mediaView);
@@ -100,6 +109,25 @@ public class PlayPage extends javax.swing.JFrame {
             
         } catch (Exception e) {
             System.out.println("Gagal memutar video: " + e.getMessage());
+        }
+    }
+    
+    public void updateInfoAnime(String judul, String genre, String episode, String imagePath) {
+        // 1. Update Teks
+        lblJudul.setText(judul);
+        lblGenre.setText("Genre: " + genre);
+        lblEpisode.setText("Episode: " + episode);
+
+        // 2. Update Thumbnail
+        // Menggunakan path dari database untuk menampilkan gambar
+        try {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imagePath);
+            // Resize gambar agar pas dengan lblThumbnail (misal 100x150)
+            java.awt.Image img = icon.getImage().getScaledInstance(100, 150, java.awt.Image.SCALE_SMOOTH);
+            lblThumbnail.setIcon(new javax.swing.ImageIcon(img));
+            lblThumbnail.setText(""); // Hilangkan tulisan "Thumbnail" jika ada
+        } catch (Exception e) {
+            lblThumbnail.setText("No Image");
         }
     }
 
@@ -135,11 +163,20 @@ public class PlayPage extends javax.swing.JFrame {
         // 5. Fullscreen / Maximize
         btnFullscreen.addActionListener(evt -> {
             if (this.getExtendedState() == javax.swing.JFrame.MAXIMIZED_BOTH) {
+                // --- KELUAR DARI FULLSCREEN ---
                 this.setExtendedState(javax.swing.JFrame.NORMAL); 
                 btnFullscreen.setText("Fullscreen");
+
+                // Munculkan kembali bagian atas (Header)
+                panelHeader.setVisible(true);
+
             } else {
+                // --- MASUK KE FULLSCREEN ---
                 this.setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH); 
                 btnFullscreen.setText("Exit Fullscreen");
+
+                // Sembunyikan bagian atas (Header) agar video penuh
+                panelHeader.setVisible(false);
             }
         });
         
@@ -175,6 +212,12 @@ public class PlayPage extends javax.swing.JFrame {
         btnFullscreen = new javax.swing.JButton();
         sliderVolume = new javax.swing.JSlider();
         panelVideoLayar = new javax.swing.JPanel();
+        panelHeader = new javax.swing.JPanel();
+        lblThumbnail = new javax.swing.JLabel();
+        panelInfo = new javax.swing.JPanel();
+        lblJudul = new javax.swing.JLabel();
+        lblGenre = new javax.swing.JLabel();
+        lblEpisode = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -214,10 +257,52 @@ public class PlayPage extends javax.swing.JFrame {
         );
         panelVideoLayarLayout.setVerticalGroup(
             panelVideoLayarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 668, Short.MAX_VALUE)
+            .addGap(0, 518, Short.MAX_VALUE)
         );
 
         getContentPane().add(panelVideoLayar, java.awt.BorderLayout.CENTER);
+
+        panelHeader.setPreferredSize(new java.awt.Dimension(1350, 150));
+        panelHeader.setLayout(new java.awt.BorderLayout());
+
+        lblThumbnail.setText("Thumbnail");
+        panelHeader.add(lblThumbnail, java.awt.BorderLayout.WEST);
+
+        panelInfo.setPreferredSize(new java.awt.Dimension(738, 70));
+
+        lblJudul.setText("Judul");
+
+        lblGenre.setText("Genre");
+
+        lblEpisode.setText("Episode");
+
+        javax.swing.GroupLayout panelInfoLayout = new javax.swing.GroupLayout(panelInfo);
+        panelInfo.setLayout(panelInfoLayout);
+        panelInfoLayout.setHorizontalGroup(
+            panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelInfoLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addGroup(panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblEpisode)
+                    .addComponent(lblJudul)
+                    .addComponent(lblGenre))
+                .addContainerGap(1218, Short.MAX_VALUE))
+        );
+        panelInfoLayout.setVerticalGroup(
+            panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelInfoLayout.createSequentialGroup()
+                .addGap(34, 34, 34)
+                .addComponent(lblJudul)
+                .addGap(18, 18, 18)
+                .addComponent(lblGenre)
+                .addGap(18, 18, 18)
+                .addComponent(lblEpisode)
+                .addContainerGap(32, Short.MAX_VALUE))
+        );
+
+        panelHeader.add(panelInfo, java.awt.BorderLayout.CENTER);
+
+        getContentPane().add(panelHeader, java.awt.BorderLayout.NORTH);
 
         pack();
         setLocationRelativeTo(null);
@@ -255,6 +340,12 @@ public class PlayPage extends javax.swing.JFrame {
     private javax.swing.JButton btnNextEps;
     private javax.swing.JButton btnPlayPause;
     private javax.swing.JButton btnPrevEps;
+    private javax.swing.JLabel lblEpisode;
+    private javax.swing.JLabel lblGenre;
+    private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel lblThumbnail;
+    private javax.swing.JPanel panelHeader;
+    private javax.swing.JPanel panelInfo;
     private javax.swing.JPanel panelKontrol;
     private javax.swing.JPanel panelVideoLayar;
     private javax.swing.JSlider sliderVolume;

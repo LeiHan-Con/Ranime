@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import LoginRegister.LoginForm;
+import LoginRegister.UserSession;
+import LoginRegister.Konek;
 
 /**
  *
@@ -29,65 +31,106 @@ public class HomePage extends javax.swing.JFrame {
     public HomePage() {
         initComponents();
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
         muatKatalogDinamis(); // Tambahkan baris ini!
     }
     
     private void muatKatalogDinamis() {
-        // 1. Array data simulasi (Nanti bisa diganti dengan data dari MySQL)
-        Anime[] daftarAnime = {
-            new Anime("Naruto Shippuden", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo.mp4"),
-            new Anime("Spy x Family", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo2.mp4"),
-            new Anime("Demon Slayer", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo3.mp4"),
-            new Anime("One Piece", "", "C:\\Users\\Rivaldo\\OneDrive\\Videos\\Captures\\TestVideo4.mp4"),
-            new Anime("Jujutsu Kaisen", "", "D:/Video/jjk.mp4"),
-            new Anime("Kaichou Wa Maid Sama", "", "C:\\Users\\Hype GLK\\OneDrive\\Dokumen\\NetBeansProjects\\Clone\\Ranime\\Kaichou wa maid sama.mp4")
-        };
+        try {
+            // 1. Panggil koneksi database dari class Konek
+            java.sql.Connection conn = Konek.connect();
+            if (conn == null) {
+                System.out.println("Gagal menyambung ke database saat memuat katalog.");
+                return;
+            }
 
-        // 2. Looping untuk mencetak kotak UI satu per satu
-        for (Anime anime : daftarAnime) {
-            
-            // a. Buat Kotak Pembungkus
-            JPanel panelItem = new JPanel();
-            panelItem.setLayout(new BorderLayout()); 
-            panelItem.setPreferredSize(new Dimension(295, 215)); // Ukuran yang sudah kita hitung tadi
-            panelItem.setBackground(new Color(100, 100, 255)); // Warna ungu kebiruan sementara
+            // 2. Tulis Query untuk mengambil seluruh data anime
+            String sql = "SELECT * FROM anime";
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            java.sql.ResultSet rs = ps.executeQuery();
 
-            // b. Buat Tombol Thumbnail (Bisa diklik)
-            JButton btnThumb = new JButton();
-            btnThumb.setContentAreaFilled(false); // Hilangkan background tombol
-            btnThumb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-            
-            // Event klik: Nanti ini akan memutar video
-            // Cari bagian ini di dalam method muatKatalogDinamis() pada HomePage.java
-            btnThumb.addActionListener(new java.awt.event.ActionListener() {
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    // 1. Cetak ke console untuk monitoring (opsional)
-                    System.out.println("Membuka pemutar untuk: " + anime.getJudul());
-                    
-                    // 2. JALANKAN WINDOW PEMUTARNYA DI SINI:
-                    // Membuat objek PlayPage baru sambil mengirimkan path video anime yang diklik
-                    PlayPage pemutar = new PlayPage(anime.getVideoPath());
-                    
-                    // Memunculkan window pemutar ke layar
-                    pemutar.setVisible(true); 
+            // Bersihkan panel utama dulu agar tidak ada data lama yang menumpuk
+            panelKatalog.removeAll();
+
+            // 3. Lakukan perulangan (looping) untuk membaca baris demi baris dari MySQL
+            while (rs.next()) {
+                // --- A. AMBIL DATA DARI DATABASE ---
+                int idAnime = rs.getInt("id");
+                String judul = rs.getString("judul");
+                String genre = rs.getString("genre");
+                String totalEpisode = String.valueOf(rs.getInt("episode")); 
+                String status = rs.getString("status");     
+                String sinopsis = rs.getString("sinopsis"); 
+                String imgPath = rs.getString("image_path");
+                String folderPath = rs.getString("folder_path"); 
+
+                // --- B. BUAT KOTAK PEMBUNGKUS ITEM ---
+                javax.swing.JPanel panelItem = new javax.swing.JPanel();
+                panelItem.setLayout(new java.awt.BorderLayout()); 
+                panelItem.setPreferredSize(new java.awt.Dimension(295, 215)); 
+                panelItem.setBackground(new java.awt.Color(45, 45, 45)); // Warna background gelap agar elegan
+
+                // --- C. BUAT TOMBOL THUMBNAIL ---
+                javax.swing.JButton btnThumb = new javax.swing.JButton();
+                btnThumb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+                // (Opsional) Langsung pasang gambar dari database ke tombol
+                try {
+                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgPath);
+                    java.awt.Image img = icon.getImage().getScaledInstance(295, 190, java.awt.Image.SCALE_SMOOTH);
+                    btnThumb.setIcon(new javax.swing.ImageIcon(img));
+                    btnThumb.setText(""); 
+                } catch (Exception ex) {
+                    btnThumb.setText("Poster"); // Jika gambar gagal dimuat
                 }
-            });
 
-            // c. Buat Teks Judul
-            JLabel lblJudul = new JLabel(anime.getJudul(), SwingConstants.CENTER);
-            lblJudul.setForeground(Color.WHITE);
+                // --- D. EVENT KLIK TOMBOL (BUKA INFOPAGE) ---
+                // Kita pakai lambda 'evt ->' agar variabel dari database bisa langsung dibaca
+                btnThumb.addActionListener(evt -> {
 
-            // d. Susun tombol dan judul ke dalam Kotak
-            panelItem.add(btnThumb, BorderLayout.CENTER);
-            panelItem.add(lblJudul, BorderLayout.SOUTH);
+                    // 1. KODE MENCATAT HISTORY KE DATABASE
+                    try {
+                        java.sql.Connection connHist = Konek.connect();
+                        String sqlInsert = "INSERT INTO watched (user_id, anime_id) VALUES (?, ?)";
+                        java.sql.PreparedStatement psInsert = connHist.prepareStatement(sqlInsert);
 
-            // e. Masukkan Kotak ke dalam wadah utama (panelKatalog)
-            panelKatalog.add(panelItem);
+                        psInsert.setInt(1, UserSession.getId()); 
+                        psInsert.setInt(2, idAnime); 
+
+                        psInsert.executeUpdate();
+                        System.out.println("Riwayat berhasil dicatat untuk anime ID: " + idAnime);
+                    } catch (Exception e) {
+                        System.out.println("Gagal mencatat riwayat: " + e.getMessage());
+                    }
+
+                    // 2. KODE MEMBUKA INFO PAGE (Bukan PlayPage!)
+                    System.out.println("Membuka info untuk: " + judul);
+                    InfoPage info = new InfoPage();
+                    // Kirim semua data yang diambil tadi ke InfoPage
+                    info.muatDataInfo(judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
+                    info.setVisible(true); 
+
+                });
+
+                // --- E. BUAT TEKS JUDUL BAWAH ---
+                javax.swing.JLabel lblJudul = new javax.swing.JLabel(judul, javax.swing.SwingConstants.CENTER);
+                lblJudul.setForeground(java.awt.Color.WHITE);
+
+                // --- F. SUSUN KE DALAM PANEL ---
+                panelItem.add(btnThumb, java.awt.BorderLayout.CENTER);
+                panelItem.add(lblJudul, java.awt.BorderLayout.SOUTH);
+
+                // Masukkan kotak ini ke dalam wadah utama (panelKatalog)
+                panelKatalog.add(panelItem);
+            }
+
+            // 4. Beritahu UI untuk memperbarui tampilan
+            panelKatalog.revalidate();
+            panelKatalog.repaint();
+
+        } catch (Exception e) {
+            System.out.println("Error saat memuat katalog dinamis: " + e.getMessage());
         }
-
-        // 3. Beritahu UI untuk memperbarui tampilan
-        panelKatalog.revalidate();
-        panelKatalog.repaint();
     }
 
     /**
@@ -105,6 +148,7 @@ public class HomePage extends javax.swing.JFrame {
         btnbookmark = new javax.swing.JLabel();
         btnhistory = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
+        lblUsername = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         panelKatalog = new javax.swing.JPanel();
 
@@ -140,6 +184,10 @@ public class HomePage extends javax.swing.JFrame {
         btnLogout.setText("Logout");
         btnLogout.addActionListener(this::btnLogoutActionPerformed);
 
+        lblUsername.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        lblUsername.setForeground(new java.awt.Color(255, 255, 255));
+        lblUsername.setText("username");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -154,6 +202,8 @@ public class HomePage extends javax.swing.JFrame {
                 .addGap(441, 441, 441)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLogout)
                 .addGap(14, 14, 14))
         );
@@ -166,7 +216,8 @@ public class HomePage extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(btnbookmark)
                     .addComponent(btnhistory)
-                    .addComponent(btnLogout))
+                    .addComponent(btnLogout)
+                    .addComponent(lblUsername))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -207,6 +258,7 @@ public class HomePage extends javax.swing.JFrame {
                 JOptionPane.YES_NO_OPTION);
 
         if(pilihan == JOptionPane.YES_OPTION){
+            UserSession.clear();
             this.dispose();
             new LoginForm().setVisible(true);
         }
@@ -257,6 +309,7 @@ public class HomePage extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel panelKatalog;
     // End of variables declaration//GEN-END:variables
 }

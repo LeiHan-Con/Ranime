@@ -217,10 +217,21 @@ public class LoginForm extends javax.swing.JFrame {
         java.sql.ResultSet rs = ps.executeQuery();
 
         if (rs.next()) {
-            JOptionPane.showMessageDialog(this, "Login Berhasil");
+            // 1. Ambil data user dari database berdasarkan nama kolomnya
+            int idUser = rs.getInt("id");
+            String namaUser = rs.getString("username");
+            String roleUser = rs.getString("role");
+
+            // 2. Masukkan data tersebut ke dalam brankas UserSession
+            UserSession.setId(idUser);
+            UserSession.setUsername(namaUser);
+            UserSession.setRole(roleUser);
+
+            // 3. Tampilkan pesan sukses dan buka HomePage
+            JOptionPane.showMessageDialog(this, "Login Berhasil! Selamat datang, " + namaUser);
             this.dispose();
+            new HomePage().setVisible(true); 
             
-            new HomePage().setVisible(true);
         } else {
             JOptionPane.showMessageDialog(this, "Username atau Password salah!");
         }

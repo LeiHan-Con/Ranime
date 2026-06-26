@@ -1,0 +1,269 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package com.ranime.player;
+
+/**
+ *
+ * @author Rivaldo
+ */
+public class InfoPage extends javax.swing.JFrame {
+    
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InfoPage.class.getName());
+
+    /**
+     * Creates new form InfoPage
+     */
+    public InfoPage() {
+        initComponents();
+    }
+    
+    // 1. Method untuk menerima data dari HomePage
+    public void muatDataInfo(String judul, String genre, String totalEpisode, String status, String sinopsis, String imagePath, String folderPath) {
+        // Set Teks ke Label sesuai nama variabel di Navigator kamu
+        lblJudul.setText(judul);
+        lblGenre.setText("Genre: " + genre);
+        lblEpisode.setText("Total Episode: " + totalEpisode);
+        lblStatus.setText("Status: " + status);
+        
+        // Trik khusus untuk Sinopsis agar teks panjang bisa turun baris (word wrap)
+        lblTextSinopsis.setText("<html><p style=\"width:450px\">" + sinopsis + "</p></html>");
+
+        // Set Gambar Thumbnail
+        try {
+            javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imagePath);
+            // Sesuaikan ukuran 200x280 atau sesuai ukuran lblThumbnail kamu di design
+            java.awt.Image img = icon.getImage().getScaledInstance(200, 280, java.awt.Image.SCALE_SMOOTH);
+            lblThumbnail.setIcon(new javax.swing.ImageIcon(img));
+            lblThumbnail.setText(""); 
+        } catch (Exception e) {
+            lblThumbnail.setText("No Image");
+        }
+
+        // Panggil fungsi untuk membuat tombol di panel bawah
+        buatTombolEpisode(folderPath, judul, genre, imagePath);
+    }
+
+    // 2. Method untuk membaca folder dan membuat tombol
+    private void buatTombolEpisode(String folderPath, String judul, String genre, String imagePath) {
+        // Bersihkan panel dan atur layoutnya menjadi berjejer ke samping (FlowLayout)
+        panelEpisode.removeAll();
+        panelEpisode.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 15, 15));
+
+        java.io.File folderAnime = new java.io.File(folderPath);
+
+        // Cek apakah folder fisik ada di laptop
+        if (folderAnime.exists() && folderAnime.isDirectory()) {
+            
+            // Saring hanya file yang berakhiran .mp4
+            java.io.File[] daftarVideo = folderAnime.listFiles((dir, name) -> name.toLowerCase().endsWith(".mp4"));
+
+            if (daftarVideo != null && daftarVideo.length > 0) {
+                // Looping untuk membuat tombol sebanyak file mp4 yang ditemukan
+                for (java.io.File file : daftarVideo) {
+                    String namaFile = file.getName();
+                    String epsAngka = "?";
+                    
+                    // Ekstrak angka episode dari nama file (misal: KaichouWaMaidSama_eps1.mp4)
+                    if (namaFile.contains("_eps")) {
+                        try {
+                            int indexMulai = namaFile.lastIndexOf("_eps") + 4;
+                            int indexSelesai = namaFile.lastIndexOf(".");
+                            epsAngka = namaFile.substring(indexMulai, indexSelesai);
+                        } catch (Exception e) {
+                            epsAngka = "X";
+                        }
+                    }
+
+                    // Buat tombol baru
+                    javax.swing.JButton btnEps = new javax.swing.JButton("Eps " + epsAngka);
+                    btnEps.setPreferredSize(new java.awt.Dimension(90, 40)); // Ukuran tombol
+                    btnEps.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+                    // Pasang aksi ketika tombol diklik
+                    final String finalEpsAngka = epsAngka;
+                    btnEps.addActionListener(evt -> {
+                        // Buka PlayPage dengan video spesifik ini
+                        PlayPage pemutar = new PlayPage(file.getAbsolutePath());
+                        pemutar.updateInfoAnime(judul, genre, finalEpsAngka, imagePath);
+                        pemutar.setVisible(true);
+                    });
+
+                    // Masukkan tombol ke dalam panelEpisode
+                    panelEpisode.add(btnEps);
+                }
+            } else {
+                panelEpisode.add(new javax.swing.JLabel("Belum ada video (.mp4) di folder ini."));
+            }
+        } else {
+            panelEpisode.add(new javax.swing.JLabel("Folder tidak ditemukan: " + folderPath));
+        }
+
+        // Refresh UI agar tombol langsung muncul
+        panelEpisode.revalidate();
+        panelEpisode.repaint();
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        lblThumbnail = new javax.swing.JLabel();
+        lblJudul = new javax.swing.JLabel();
+        lblGenre = new javax.swing.JLabel();
+        lblEpisode = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
+        lblSinopsis = new javax.swing.JLabel();
+        lblTextSinopsis = new javax.swing.JLabel();
+        panelEpisode = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        lblThumbnail.setText("Thumbnail");
+
+        lblJudul.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblJudul.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblJudul.setText("Judul");
+
+        lblGenre.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblGenre.setText("Genre :");
+
+        lblEpisode.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblEpisode.setText("Episode :");
+
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblStatus.setText("Status :");
+
+        lblSinopsis.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        lblSinopsis.setText("Sinopsis :");
+
+        lblTextSinopsis.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        lblTextSinopsis.setText("Text sinopsis");
+        lblTextSinopsis.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+        javax.swing.GroupLayout panelEpisodeLayout = new javax.swing.GroupLayout(panelEpisode);
+        panelEpisode.setLayout(panelEpisodeLayout);
+        panelEpisodeLayout.setHorizontalGroup(
+            panelEpisodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1100, Short.MAX_VALUE)
+        );
+        panelEpisodeLayout.setVerticalGroup(
+            panelEpisodeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 170, Short.MAX_VALUE)
+        );
+
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton1.setText("Kembali");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(100, 100, 100)
+                        .addComponent(lblJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 1145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(37, 37, 37)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(panelEpisode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(lblThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(27, 27, 27)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(lblGenre)
+                                    .addComponent(lblEpisode)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(lblSinopsis)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(lblTextSinopsis, javax.swing.GroupLayout.PREFERRED_SIZE, 638, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(lblStatus))))))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblJudul, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addComponent(lblGenre)
+                                .addGap(62, 62, 62)
+                                .addComponent(lblEpisode)
+                                .addGap(61, 61, 61)
+                                .addComponent(lblStatus)
+                                .addGap(68, 68, 68)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(lblSinopsis)
+                                    .addComponent(lblTextSinopsis, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(lblThumbnail, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(panelEpisode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(29, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> new InfoPage().setVisible(true));
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel lblEpisode;
+    private javax.swing.JLabel lblGenre;
+    private javax.swing.JLabel lblJudul;
+    private javax.swing.JLabel lblSinopsis;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JLabel lblTextSinopsis;
+    private javax.swing.JLabel lblThumbnail;
+    private javax.swing.JPanel panelEpisode;
+    // End of variables declaration//GEN-END:variables
+}

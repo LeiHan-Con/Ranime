@@ -10,7 +10,9 @@ import LoginRegister.UserSession;
  * @author Rivaldo
  */
 public class InfoPage extends javax.swing.JFrame {
-     private int animeId;
+    
+    private int animeId;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InfoPage.class.getName());
 
     /**
@@ -19,13 +21,14 @@ public class InfoPage extends javax.swing.JFrame {
     public InfoPage() {
         initComponents();
     }
-    
+
     // 1. Method untuk menerima data dari HomePage
-    public void muatDataInfo(int animeId, String judul, String genre,
+    public void muatDataInfo(int idAnime, String judul, String genre,
         String totalEpisode, String status,
         String sinopsis, String imagePath, String folderPath) {
 
-        this.animeId = animeId;
+        this.animeId = idAnime;
+        this.setTitle(judul);
 
         lblJudul.setText(judul);
         lblGenre.setText("Genre: " + genre);
@@ -39,7 +42,7 @@ public class InfoPage extends javax.swing.JFrame {
         try {
             javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imagePath);
             // Sesuaikan ukuran 200x280 atau sesuai ukuran lblThumbnail kamu di design
-            java.awt.Image img = icon.getImage().getScaledInstance(200, 280, java.awt.Image.SCALE_SMOOTH);
+            java.awt.Image img = icon.getImage().getScaledInstance(318, 427, java.awt.Image.SCALE_SMOOTH);
             lblThumbnail.setIcon(new javax.swing.ImageIcon(img));
             lblThumbnail.setText(""); 
         } catch (Exception e) {
@@ -89,9 +92,14 @@ public class InfoPage extends javax.swing.JFrame {
                     // Pasang aksi ketika tombol diklik
                     final String finalEpsAngka = epsAngka;
                     btnEps.addActionListener(evt -> {
-                         WatchedBase.saveWatched(UserSession.getId(), animeId);
+                        // Kodingan lama
+                        // Kodingan baru (tambahkan finalEpsAngka)
+                        WatchedBase.saveWatched(LoginRegister.UserSession.getId(), animeId, finalEpsAngka);
                         // Buka PlayPage dengan video spesifik ini
                         PlayPage pemutar = new PlayPage(file.getAbsolutePath());
+                        
+                        pemutar.setJudulPage(judul, Integer.parseInt(finalEpsAngka));
+                        
                         pemutar.updateInfoAnime(judul, genre, finalEpsAngka, imagePath);
                         pemutar.setVisible(true);
                     });

@@ -21,7 +21,7 @@ import LoginRegister.Konek;
  *
  * @author Rivaldo
  */
-public class HomePage extends javax.swing.JFrame {
+public class HomePage extends BasePage {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(HomePage.class.getName());
 
@@ -32,7 +32,12 @@ public class HomePage extends javax.swing.JFrame {
         initComponents();
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
-        muatKatalogDinamis(); // Tambahkan baris ini!
+        loadData();
+    }
+    
+    @Override
+    public void loadData() {
+        muatKatalogDinamis();
     }
     
     private void muatKatalogDinamis() {
@@ -143,10 +148,10 @@ public class HomePage extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        btnbookmark = new javax.swing.JLabel();
-        btnhistory = new javax.swing.JLabel();
+        lblLogo = new javax.swing.JLabel();
+        btnHome = new javax.swing.JLabel();
+        btBbookmarks = new javax.swing.JLabel();
+        btnWatched = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         lblUsername = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -158,26 +163,27 @@ public class HomePage extends javax.swing.JFrame {
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Logo");
+        lblLogo.setForeground(new java.awt.Color(255, 255, 255));
+        lblLogo.setText("Logo");
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Historic", 0, 24)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Home");
+        btnHome.setBackground(new java.awt.Color(0, 0, 102));
+        btnHome.setFont(new java.awt.Font("Segoe UI Historic", 1, 24)); // NOI18N
+        btnHome.setForeground(new java.awt.Color(51, 51, 255));
+        btnHome.setText("Home");
 
-        btnbookmark.setForeground(new java.awt.Color(255, 255, 255));
-        btnbookmark.setText("Bookmarks");
-        btnbookmark.addMouseListener(new java.awt.event.MouseAdapter() {
+        btBbookmarks.setForeground(new java.awt.Color(255, 255, 255));
+        btBbookmarks.setText("Bookmarks");
+        btBbookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnbookmarkMouseClicked(evt);
+                btBbookmarksMouseClicked(evt);
             }
         });
 
-        btnhistory.setForeground(new java.awt.Color(255, 255, 255));
-        btnhistory.setText("Watched");
-        btnhistory.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnWatched.setForeground(new java.awt.Color(255, 255, 255));
+        btnWatched.setText("Watched");
+        btnWatched.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnhistoryMouseClicked(evt);
+                btnWatchedMouseClicked(evt);
             }
         });
 
@@ -194,13 +200,13 @@ public class HomePage extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(jLabel1)
-                .addGap(64, 64, 64)
-                .addComponent(btnbookmark)
-                .addGap(64, 64, 64)
-                .addComponent(btnhistory)
-                .addGap(441, 441, 441)
-                .addComponent(jLabel2)
+                .addComponent(lblLogo)
+                .addGap(103, 103, 103)
+                .addComponent(btnHome)
+                .addGap(85, 85, 85)
+                .addComponent(btBbookmarks)
+                .addGap(80, 80, 80)
+                .addComponent(btnWatched)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblUsername)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -212,10 +218,10 @@ public class HomePage extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(11, 11, 11)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(btnbookmark)
-                    .addComponent(btnhistory)
+                    .addComponent(lblLogo)
+                    .addComponent(btnHome)
+                    .addComponent(btBbookmarks)
+                    .addComponent(btnWatched)
                     .addComponent(btnLogout)
                     .addComponent(lblUsername))
                 .addContainerGap(20, Short.MAX_VALUE))
@@ -251,6 +257,49 @@ public class HomePage extends javax.swing.JFrame {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    @Override
+    public void setupNavigasi() {
+        // 1. Aksi Navigasi ke Home
+        btnHome.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Sudah di halaman Home, tidak perlu aksi (atau refresh)
+            }
+        });
+
+        // 2. Aksi Navigasi ke Bookmarks
+        btBbookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new Bookmarks().setVisible(true);
+            }
+        });
+
+        // 3. Aksi Navigasi ke Watched
+        btnWatched.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new Watched().setVisible(true);
+            }
+        });
+
+        // 4. Aksi Logout
+        btnLogout.addActionListener(evt -> {
+            int pilihan = javax.swing.JOptionPane.showConfirmDialog(null, 
+                    "Apakah Anda yakin ingin logout?", 
+                    "Konfirmasi Logout", 
+                    javax.swing.JOptionPane.YES_NO_OPTION);
+
+            if(pilihan == javax.swing.JOptionPane.YES_OPTION){
+                LoginRegister.UserSession.clear();
+                closePage();
+                new LoginRegister.LoginForm().setVisible(true);
+            }
+        });
+    }
+    
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         // TODO add your handling code here:
          int pilihan = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin logout?", 
@@ -264,18 +313,19 @@ public class HomePage extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
 
-    private void btnhistoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnhistoryMouseClicked
+    private void btnWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWatchedMouseClicked
         // TODO add your handling code here:
         this.dispose(); // tutup register                           
         new Watched().setVisible(true); // buka form watched
-    }//GEN-LAST:event_btnhistoryMouseClicked
+    }//GEN-LAST:event_btnWatchedMouseClicked
 
-    private void btnbookmarkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnbookmarkMouseClicked
+    private void btBbookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBbookmarksMouseClicked
         // TODO add your handling code here:
         this.dispose(); // tutup register                           
         new Bookmarks().setVisible(true); // buka form login
-    }//GEN-LAST:event_btnbookmarkMouseClicked
-
+    }//GEN-LAST:event_btBbookmarksMouseClicked
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -302,13 +352,13 @@ public class HomePage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btBbookmarks;
+    private javax.swing.JLabel btnHome;
     private javax.swing.JButton btnLogout;
-    private javax.swing.JLabel btnbookmark;
-    private javax.swing.JLabel btnhistory;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel btnWatched;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel panelKatalog;
     // End of variables declaration//GEN-END:variables

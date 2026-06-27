@@ -51,6 +51,7 @@ public class Registerform extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Register Page");
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
@@ -199,47 +200,50 @@ public class Registerform extends javax.swing.JFrame {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
           try {
-    // ambil input
-    String username = jTextField1.getText();
-    String password = new String(jPasswordField1.getPassword());
+            // ambil input
+            String username = jTextField1.getText();
+            String password = new String(jPasswordField1.getPassword());
 
-    // VALIDASI
-    if(username.isEmpty() || password.isEmpty()){
-        JOptionPane.showMessageDialog(this, "Data tidak boleh kosong!");
-        return;
-    }
+            // VALIDASI
+            if(username.isEmpty() || password.isEmpty()){
+                JOptionPane.showMessageDialog(this, "Data tidak boleh kosong!");
+                return;
+            }
 
-    if(password.length() < 8){
-        JOptionPane.showMessageDialog(this, "Password minimal 8 karakter!");
-        return;
-    }
+            if(password.length() < 8){
+                JOptionPane.showMessageDialog(this, "Password minimal 8 karakter!");
+                return;
+            }
 
-    // koneksi ke database
-    java.sql.Connection conn = Konek.connect();
+            // koneksi ke database
+            java.sql.Connection conn = Konek.connect();
 
-    // cek username
-    String cek = "SELECT * FROM users WHERE username=?";
-    java.sql.PreparedStatement ps = conn.prepareStatement(cek);
-    ps.setString(1, username);
-    java.sql.ResultSet rs = ps.executeQuery();
+            // cek username
+            String cek = "SELECT * FROM users WHERE username=?";
+            java.sql.PreparedStatement ps = conn.prepareStatement(cek);
+            ps.setString(1, username);
+            java.sql.ResultSet rs = ps.executeQuery();
 
-    if(rs.next()){
-        JOptionPane.showMessageDialog(this, "Username sudah digunakan!");
-        return;
-    }
+            if(rs.next()){
+                JOptionPane.showMessageDialog(this, "Username sudah digunakan!");
+                return;
+            }
 
-    // insert data
-    String insert = "INSERT INTO users(username, password, role) VALUES (?, ?, 'user')";
-    java.sql.PreparedStatement ps2 = conn.prepareStatement(insert);
-    ps2.setString(1, username);
-    ps2.setString(2, password);
-    ps2.executeUpdate();
+            // insert data
+            String insert = "INSERT INTO users(username, password, role) VALUES (?, ?, 'user')";
+            java.sql.PreparedStatement ps2 = conn.prepareStatement(insert);
+            ps2.setString(1, username);
+            ps2.setString(2, password);
+            ps2.executeUpdate();
 
-    JOptionPane.showMessageDialog(this, "Register berhasil!");
+            JOptionPane.showMessageDialog(this, "Register berhasil!");
+            
+            this.dispose();
+            new LoginForm().setVisible(true);
 
-} catch (Exception e) {
-    JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
-}
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void LogindashMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogindashMouseClicked

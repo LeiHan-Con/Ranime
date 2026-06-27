@@ -34,84 +34,88 @@ public class Watched extends javax.swing.JFrame {
      */
     public Watched() {
         initComponents();
-        jPanel2.setLayout(new java.awt.FlowLayout(
-                java.awt.FlowLayout.LEFT,20,20));
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
+        
+        // 1. Mengikuti gaya layout HomePage (Jarak 28)
+        jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 28, 28));
+        
+        // 2. Matikan scroll samping agar memaksa item turun ke bawah
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        // 3. Atur ukuran lebar mengikuti HomePage (1320), tingginya dilebihkan agar bisa di-scroll
+        jPanel2.setPreferredSize(new java.awt.Dimension(1320, 2000)); 
 
-            loadWatched();
+        loadWatched();
     }
     
-private void loadWatched() {
+    private void loadWatched() {
+        try {
+            Connection conn = Konek.connect();
 
-    try {
+            // Tambahkan w.episode_tonton di bagian SELECT
+            String sql =
+                "SELECT a.*, w.episode_tonton, w.watched_at " +
+                "FROM watched w " +
+                "JOIN anime a ON w.anime_id=a.id " +
+                "WHERE w.user_id=? AND w.episode_tonton IS NOT NULL " + // Tambahkan ini
+                "ORDER BY w.watched_at DESC";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserSession.getId());
+            ResultSet rs = ps.executeQuery();
 
-        Connection conn = Konek.connect();
+            jPanel2.removeAll();
 
-        String sql =
-        "SELECT a.* " +
-        "FROM watched w " +
-        "JOIN anime a ON w.anime_id=a.id " +
-        "WHERE w.user_id=? " +
-        "ORDER BY watched_at DESC";
+            while(rs.next()){
+                String judul = rs.getString("judul");
+                String gambar = rs.getString("image_path");
 
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, UserSession.getId());
+                // Ambil data episode dari database
+                String eps = rs.getString("episode_tonton");
+                
+                // Ambil waktu tonton
+                String waktuTonton = rs.getString("watched_at");
+                
+                if(waktuTonton != null && waktuTonton.length() > 16) {
+                    waktuTonton = waktuTonton.substring(0, 16); // Ambil sampai menit saja
+                }
+                
+                // Jika datanya kosong (misal riwayat lama sebelum fitur ini ada), jadikan strip "-"
+                if(eps == null) eps = "-"; 
 
-        ResultSet rs = ps.executeQuery();
+                JPanel card = new JPanel(new BorderLayout());
+                card.setPreferredSize(new Dimension(220, 250));
+                card.setBackground(Color.DARK_GRAY);
 
-        jPanel2.removeAll();
+                JButton poster = new JButton();
+                try {
+                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(gambar);
+                    java.awt.Image img = icon.getImage().getScaledInstance(220, 200, java.awt.Image.SCALE_SMOOTH);
+                    poster.setIcon(new javax.swing.ImageIcon(img));
+                } catch(Exception ex) {
+                    poster.setText("No Image");
+                }
 
-        while(rs.next()){
+                String teksLabel = "<html><div style='text-align: center;'>" + 
+                                    judul + "<br>" +
+                                    "<span style='color: yellow;'>Episode: " + eps + "</span><br>" +
+                                    "<span style='color: lightgray; font-size: 10px;'>Terakhir: " + waktuTonton + "</span>" +
+                                    "</div></html>";
+                JLabel lbl = new JLabel(teksLabel, SwingConstants.CENTER);
+                lbl.setForeground(Color.WHITE);
 
-            String judul = rs.getString("judul");
-            String gambar = rs.getString("image_path");
-
-            JPanel card = new JPanel(new BorderLayout());
-            card.setPreferredSize(new Dimension(220,250));
-            card.setBackground(Color.DARK_GRAY);
-
-            JButton poster = new JButton();
-
-            try{
-
-                javax.swing.ImageIcon icon =
-                        new javax.swing.ImageIcon(gambar);
-
-                java.awt.Image img =
-                        icon.getImage().getScaledInstance(
-                                220,
-                                200,
-                                java.awt.Image.SCALE_SMOOTH);
-
-                poster.setIcon(new javax.swing.ImageIcon(img));
-
-            }catch(Exception ex){
-
-                poster.setText("No Image");
-
+                card.add(poster, BorderLayout.CENTER);
+                card.add(lbl, BorderLayout.SOUTH);
+                jPanel2.add(card);
             }
 
-            JLabel lbl =
-                    new JLabel(judul,SwingConstants.CENTER);
+            jPanel2.revalidate();
+            jPanel2.repaint();
 
-            lbl.setForeground(Color.WHITE);
-
-            card.add(poster,BorderLayout.CENTER);
-            card.add(lbl,BorderLayout.SOUTH);
-
-            jPanel2.add(card);
-
+        } catch(Exception e) {
+            e.printStackTrace();
         }
-
-        jPanel2.revalidate();
-        jPanel2.repaint();
-
-    }catch(Exception e){
-
-        e.printStackTrace();
-
     }
-
-}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -121,114 +125,126 @@ private void loadWatched() {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        panelHeader = new javax.swing.JPanel();
+        lblLogo = new javax.swing.JLabel();
+        btnHome = new javax.swing.JLabel();
+        btnWatched = new javax.swing.JLabel();
+        btnLogout = new javax.swing.JButton();
+        lblUsername = new javax.swing.JLabel();
+        btnBookmarks = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        homepagebtn = new javax.swing.JLabel();
-        bookmarksbtn = new javax.swing.JLabel();
-        btnLogout = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel1.setForeground(new java.awt.Color(255, 255, 255));
+        panelHeader.setBackground(new java.awt.Color(102, 102, 102));
+        panelHeader.setPreferredSize(new java.awt.Dimension(708, 64));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI Historic", 0, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Watched");
+        lblLogo.setForeground(new java.awt.Color(255, 255, 255));
+        lblLogo.setText("Logo");
 
-        jScrollPane1.setBackground(new java.awt.Color(255, 255, 204));
-
-        jPanel2.setBackground(new java.awt.Color(255, 255, 204));
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1492, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 682, Short.MAX_VALUE)
-        );
-
-        jScrollPane1.setViewportView(jPanel2);
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Logo");
-
-        homepagebtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        homepagebtn.setForeground(new java.awt.Color(255, 255, 255));
-        homepagebtn.setText("Home");
-        homepagebtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnHome.setBackground(new java.awt.Color(0, 0, 102));
+        btnHome.setForeground(new java.awt.Color(255, 255, 255));
+        btnHome.setText("Home");
+        btnHome.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                homepagebtnMouseClicked(evt);
+                btnHomeMouseClicked(evt);
             }
         });
 
-        bookmarksbtn.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        bookmarksbtn.setForeground(new java.awt.Color(255, 255, 255));
-        bookmarksbtn.setText("Bookmarks");
-        bookmarksbtn.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnWatched.setFont(new java.awt.Font("Segoe UI Historic", 1, 24)); // NOI18N
+        btnWatched.setForeground(new java.awt.Color(51, 51, 255));
+        btnWatched.setText("Watched");
+        btnWatched.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                bookmarksbtnMouseClicked(evt);
+                btnWatchedMouseClicked(evt);
             }
         });
 
         btnLogout.setText("Logout");
         btnLogout.addActionListener(this::btnLogoutActionPerformed);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        lblUsername.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        lblUsername.setForeground(new java.awt.Color(255, 255, 255));
+        lblUsername.setText("username");
+
+        btnBookmarks.setForeground(new java.awt.Color(255, 255, 255));
+        btnBookmarks.setText("Bookmarks");
+        btnBookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnBookmarksMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelHeaderLayout = new javax.swing.GroupLayout(panelHeader);
+        panelHeader.setLayout(panelHeaderLayout);
+        panelHeaderLayout.setHorizontalGroup(
+            panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelHeaderLayout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addComponent(jLabel2)
-                .addGap(64, 64, 64)
-                .addComponent(homepagebtn)
-                .addGap(64, 64, 64)
-                .addComponent(bookmarksbtn)
-                .addGap(441, 441, 441)
-                .addComponent(jLabel1)
+                .addComponent(lblLogo)
+                .addGap(116, 116, 116)
+                .addComponent(btnHome)
+                .addGap(107, 107, 107)
+                .addComponent(btnBookmarks)
+                .addGap(62, 62, 62)
+                .addComponent(btnWatched)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
+                .addComponent(lblUsername)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnLogout)
+                .addGap(14, 14, 14))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(homepagebtn)
-                    .addComponent(bookmarksbtn)
-                    .addComponent(btnLogout))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
-                .addContainerGap())
+        panelHeaderLayout.setVerticalGroup(
+            panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelHeaderLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addGroup(panelHeaderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblLogo)
+                    .addComponent(btnHome)
+                    .addComponent(btnLogout)
+                    .addComponent(lblUsername)
+                    .addComponent(btnBookmarks)
+                    .addComponent(btnWatched))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
+
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 204));
+        jScrollPane1.setHorizontalScrollBar(null);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(1322, 702));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel2.setPreferredSize(new java.awt.Dimension(1320, 700));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1326, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 700, Short.MAX_VALUE)
+        );
+
+        jScrollPane1.setViewportView(jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelHeader, javax.swing.GroupLayout.DEFAULT_SIZE, 1350, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1338, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(panelHeader, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -236,29 +252,36 @@ private void loadWatched() {
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bookmarksbtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bookmarksbtnMouseClicked
-        // TODO add your handling code here:
-         this.dispose(); // tutup register                           
-        new Bookmarks().setVisible(true); // buka form watched
-    }//GEN-LAST:event_bookmarksbtnMouseClicked
-
-    private void homepagebtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_homepagebtnMouseClicked
-        // TODO add your handling code here:
-         this.dispose(); // tutup register                           
-        new HomePage().setVisible(true); // buka form watched
-    }//GEN-LAST:event_homepagebtnMouseClicked
-
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         // TODO add your handling code here:
-        int pilihan = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin logout?", 
-                "Konfirmasi Logout", 
-                JOptionPane.YES_NO_OPTION);
+        int pilihan = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin logout?",
+            "Konfirmasi Logout",
+            JOptionPane.YES_NO_OPTION);
 
         if(pilihan == JOptionPane.YES_OPTION){
+            UserSession.clear();
             this.dispose();
             new LoginForm().setVisible(true);
         }
     }//GEN-LAST:event_btnLogoutActionPerformed
+
+    private void btnWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWatchedMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        new Watched().setVisible(true);
+    }//GEN-LAST:event_btnWatchedMouseClicked
+
+    private void btnBookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBookmarksMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        new Bookmarks().setVisible(true);
+    }//GEN-LAST:event_btnBookmarksMouseClicked
+
+    private void btnHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHomeMouseClicked
+        // TODO add your handling code here:
+        this.dispose();
+        new HomePage().setVisible(true);
+    }//GEN-LAST:event_btnHomeMouseClicked
 
     /**
      * @param args the command line arguments
@@ -286,13 +309,14 @@ private void loadWatched() {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel bookmarksbtn;
+    private javax.swing.JLabel btnBookmarks;
+    private javax.swing.JLabel btnHome;
     private javax.swing.JButton btnLogout;
-    private javax.swing.JLabel homepagebtn;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel btnWatched;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblLogo;
+    private javax.swing.JLabel lblUsername;
+    private javax.swing.JPanel panelHeader;
     // End of variables declaration//GEN-END:variables
 }

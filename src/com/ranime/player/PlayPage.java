@@ -24,6 +24,19 @@ public class PlayPage extends javax.swing.JFrame {
     private MediaPlayer mediaPlayer;
     private String urlVideo;
     
+    //Variabel global
+    private String judulAnime;
+    private String genreAnime;
+    private String posterPath;
+    private String basePath;
+    private String ekstensi;
+    private int currentEps;
+    
+    // Variabel untuk Slider Waktu
+    private javax.swing.JSlider sliderWaktu;
+    private javax.swing.JLabel lblWaktu;
+    private javax.swing.JPanel panelWaktu;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PlayPage.class.getName());
 
     /**
@@ -37,6 +50,10 @@ public class PlayPage extends javax.swing.JFrame {
         this.setSize(1350, 700); 
         this.setLocationRelativeTo(null); 
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        
+        // ---> TAMBAHKAN BARIS INI DI SINI <---
+        aturTombolNavigasi(this.urlVideo);
+        // -------------------------------------
         
         // --- TAMBAHKAN SENSOR JENDELA INI ---
         this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -60,6 +77,27 @@ public class PlayPage extends javax.swing.JFrame {
         
         jfxPanel = new JFXPanel();
         panelVideoLayar.add(jfxPanel, java.awt.BorderLayout.CENTER);
+        
+        // --- KODE BARU: Membuat Panel Waktu (Slider + Label) ---
+        panelWaktu = new javax.swing.JPanel(new java.awt.BorderLayout());
+        panelWaktu.setBackground(java.awt.Color.BLACK); // Agar menyatu dengan video
+        
+        // Setup Slider
+        sliderWaktu = new javax.swing.JSlider(0, 100, 0);
+        sliderWaktu.setBackground(java.awt.Color.BLACK);
+        
+        // Setup Label Teks
+        lblWaktu = new javax.swing.JLabel("00:00 / 00:00");
+        lblWaktu.setForeground(java.awt.Color.WHITE);
+        lblWaktu.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 10, 0, 15)); // Beri jarak kanan
+        
+        // Susun ke dalam panel
+        panelWaktu.add(sliderWaktu, java.awt.BorderLayout.CENTER);
+        panelWaktu.add(lblWaktu, java.awt.BorderLayout.EAST);
+        
+        // Tempelkan di bagian BAWAH layar video (di atas panelKontrol)
+        panelVideoLayar.add(panelWaktu, java.awt.BorderLayout.SOUTH);
+        // --------------------------------------------------------
         
         panelVideoLayar.revalidate();
         panelVideoLayar.repaint();
@@ -103,8 +141,28 @@ public class PlayPage extends javax.swing.JFrame {
             
             // 3. Tetap gunakan setOnReady agar tidak layar hitam lagi
             mediaPlayer.setOnReady(() -> {
+                // Set batas maksimum slider sesuai durasi video
+                sliderWaktu.setMaximum((int) mediaPlayer.getTotalDuration().toSeconds());
+                
                 mediaPlayer.play(); 
                 btnPlayPause.setText("Pause");
+            });
+            
+            // 4. KODE BARU: Mendengarkan pergerakan waktu video
+            mediaPlayer.currentTimeProperty().addListener((observable, oldValue, newValue) -> {
+                // Geser slider secara otomatis JIKA user tidak sedang menyeretnya
+                if (!sliderWaktu.getValueIsAdjusting()) {
+                    sliderWaktu.setValue((int) newValue.toSeconds());
+                }
+                
+                // Ambil format teks
+                String waktuSekarang = formatWaktu(newValue);
+                String totalDurasi = formatWaktu(mediaPlayer.getTotalDuration());
+                
+                // Gunakan SwingUtilities agar UI Swing tidak bentrok dengan thread JavaFX
+                javax.swing.SwingUtilities.invokeLater(() -> {
+                    lblWaktu.setText(waktuSekarang + " / " + totalDurasi);
+                });
             });
             
         } catch (Exception e) {
@@ -117,6 +175,10 @@ public class PlayPage extends javax.swing.JFrame {
         lblJudul.setText(judul);
         lblGenre.setText("Genre: " + genre);
         lblEpisode.setText("Episode: " + episode);
+        
+        this.judulAnime = judul;
+        this.genreAnime = genre;
+        this.posterPath = imagePath;
 
         // 2. Update Thumbnail
         // Menggunakan path dari database untuk menampilkan gambar
@@ -180,18 +242,119 @@ public class PlayPage extends javax.swing.JFrame {
             }
         });
         
-        // 6. Tombol Next dan Prev Eps (Hentikan video, lalu tutup window)
+        // 6. Tombol Next dan Prev Eps (Hentikan video, buka episode baru, lalu tutup window)
         btnNextEps.addActionListener(evt -> {
-            if (mediaPlayer != null) mediaPlayer.stop();
-            this.dispose(); 
             System.out.println("Tombol Next Eps ditekan!");
+            
+            // 1. Matikan video yang sedang berjalan
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+            }
+            
+            // 2. Rangkai path untuk episode selanjutnya
+            int nextEps = currentEps + 1;
+            String nextVideoPath = basePath + nextEps + ekstensi;
+            
+            // 3. Buka PlayPage baru dengan episode tujuan
+            PlayPage pageBaru = new PlayPage(nextVideoPath);
+            pageBaru.setJudulPage(judulAnime, nextEps);
+            pageBaru.updateInfoAnime(judulAnime, genreAnime, String.valueOf(nextEps), posterPath);
+            pageBaru.setVisible(true);
+            
+            // 4. Tutup halaman yang lama
+            this.dispose(); 
         });
         
         btnPrevEps.addActionListener(evt -> {
-            if (mediaPlayer != null) mediaPlayer.stop();
-            this.dispose(); 
             System.out.println("Tombol Prev Eps ditekan!");
+            
+            // 1. Matikan video yang sedang berjalan
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+            }
+            
+            // 2. Rangkai path untuk episode sebelumnya
+            int prevEps = currentEps - 1;
+            String prevVideoPath = basePath + prevEps + ekstensi;
+            
+            // 3. Buka PlayPage baru dengan episode tujuan
+            PlayPage pageBaru = new PlayPage(prevVideoPath);
+            pageBaru.setJudulPage(judulAnime, prevEps);
+            pageBaru.updateInfoAnime(judulAnime, genreAnime, String.valueOf(prevEps), posterPath);
+            pageBaru.setVisible(true);
+            
+            // 4. Tutup halaman yang lama
+            this.dispose(); 
         });
+        
+        // 7. Logika Slider Waktu (Maju/Mundur Video)
+        sliderWaktu.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                // Saat user melepas klik dari slider, suruh video loncat ke detik tersebut
+                Platform.runLater(() -> {
+                    mediaPlayer.seek(Duration.seconds(sliderWaktu.getValue()));
+                });
+            }
+        });
+    }
+    
+    private String formatWaktu(Duration durasi) {
+        if (durasi == null || durasi.isUnknown()) {
+            return "00:00";
+        }
+        int totalDetik = (int) Math.floor(durasi.toSeconds());
+        int jam = totalDetik / 3600;
+        int menit = (totalDetik % 3600) / 60;
+        int detik = totalDetik % 60;
+        
+        if (jam > 0) {
+            return String.format("%02d:%02d:%02d", jam, menit, detik);
+        } else {
+            return String.format("%02d:%02d", menit, detik);
+        }
+    }
+    
+    private void aturTombolNavigasi(String pathVideo) {
+        try {
+            // Mencari posisi teks "_eps" dan "."
+            int indexEps = pathVideo.lastIndexOf("_eps");
+            int indexTitik = pathVideo.lastIndexOf(".");
+            
+            if (indexEps != -1 && indexTitik != -1) {
+                // Potong teks: "assets/anime/KaichouWaMaidSama_eps"
+                basePath = pathVideo.substring(0, indexEps + 4); 
+                // Potong teks: ".mp4"
+                ekstensi = pathVideo.substring(indexTitik);      
+                
+                // Ambil angkanya dan ubah jadi Integer
+                String epsString = pathVideo.substring(indexEps + 4, indexTitik);
+                currentEps = Integer.parseInt(epsString);
+                
+                // 1. CEK EPS SEBELUMNYA (currentEps - 1)
+                java.io.File filePrev = new java.io.File(basePath + (currentEps - 1) + ekstensi);
+                // Jika file ada, tombol tampil. Jika tidak (misal ini eps 1), tombol hilang (false).
+                btnPrevEps.setVisible(filePrev.exists()); 
+                
+                // 2. CEK EPS SELANJUTNYA (currentEps + 1)
+                java.io.File fileNext = new java.io.File(basePath + (currentEps + 1) + ekstensi);
+                // Jika file eps 2 ada, tombol tampil. Jika ini eps terakhir, tombol hilang.
+                btnNextEps.setVisible(fileNext.exists()); 
+                
+                
+            }
+        } catch (Exception e) {
+            System.out.println("Gagal mengatur navigasi: " + e.getMessage());
+            btnPrevEps.setVisible(false);
+            btnNextEps.setVisible(false);
+        }
+        
+        this.setTitle(this.judulAnime + " - Episode " + currentEps);
+    }
+    
+    public void setJudulPage(String judul, int episode) {
+        this.judulAnime = judul;
+        this.setTitle(judul + " - Episode " + episode);
     }
 
     /**
@@ -218,6 +381,7 @@ public class PlayPage extends javax.swing.JFrame {
         lblJudul = new javax.swing.JLabel();
         lblGenre = new javax.swing.JLabel();
         lblEpisode = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -276,6 +440,10 @@ public class PlayPage extends javax.swing.JFrame {
 
         lblEpisode.setText("Episode");
 
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton1.setText("Kembali");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
         javax.swing.GroupLayout panelInfoLayout = new javax.swing.GroupLayout(panelInfo);
         panelInfo.setLayout(panelInfoLayout);
         panelInfoLayout.setHorizontalGroup(
@@ -283,21 +451,33 @@ public class PlayPage extends javax.swing.JFrame {
             .addGroup(panelInfoLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addGroup(panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblEpisode)
-                    .addComponent(lblJudul)
-                    .addComponent(lblGenre))
-                .addContainerGap(1218, Short.MAX_VALUE))
+                    .addGroup(panelInfoLayout.createSequentialGroup()
+                        .addComponent(lblJudul)
+                        .addGap(0, 1225, Short.MAX_VALUE))
+                    .addGroup(panelInfoLayout.createSequentialGroup()
+                        .addGroup(panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lblEpisode)
+                            .addComponent(lblGenre))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         panelInfoLayout.setVerticalGroup(
             panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelInfoLayout.createSequentialGroup()
                 .addGap(34, 34, 34)
                 .addComponent(lblJudul)
-                .addGap(18, 18, 18)
-                .addComponent(lblGenre)
-                .addGap(18, 18, 18)
-                .addComponent(lblEpisode)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addGroup(panelInfoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelInfoLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lblGenre)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblEpisode)
+                        .addContainerGap(32, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelInfoLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40))))
         );
 
         panelHeader.add(panelInfo, java.awt.BorderLayout.CENTER);
@@ -307,6 +487,13 @@ public class PlayPage extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        mediaPlayer.stop();
+        mediaPlayer.dispose();
+        this.dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -340,6 +527,7 @@ public class PlayPage extends javax.swing.JFrame {
     private javax.swing.JButton btnNextEps;
     private javax.swing.JButton btnPlayPause;
     private javax.swing.JButton btnPrevEps;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lblEpisode;
     private javax.swing.JLabel lblGenre;
     private javax.swing.JLabel lblJudul;

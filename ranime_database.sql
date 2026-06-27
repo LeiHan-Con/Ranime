@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 26, 2026 at 01:22 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Waktu pembuatan: 27 Jun 2026 pada 12.02
+-- Versi server: 10.4.32-MariaDB
+-- Versi PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `anime`
+-- Struktur dari tabel `anime`
 --
 
 CREATE TABLE `anime` (
@@ -41,21 +41,21 @@ CREATE TABLE `anime` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `anime`
+-- Dumping data untuk tabel `anime`
 --
 
 INSERT INTO `anime` (`id`, `judul`, `genre`, `episode`, `status`, `sinopsis`, `image_path`, `video_path`, `folder_path`, `created_at`) VALUES
-(1, 'Naruto Shippuden', 'Action, Adventure', 500, 'Completed', 'menceritakan petualangan Naruto Uzumaki remaja yang kembali ke Desa Konoha setelah dua setengah tahun berlatih intensif. Ia harus menyelamatkan sahabatnya, Sasuke Uchiha, dari cengkeraman balas dendam, sekaligus menghadapi ancaman global dari organisasi kriminal ninja yang sangat berbahaya, Akatsuki', 'images/naruto.jpg', 'videos/naruto.mp4', '', '2026-06-24 11:10:56'),
-(2, 'Spy x Family', 'Action, Comedy', 37, 'Ongoing', 'Menceritakan mata-mata bernama Loid Forger yang harus membentuk keluarga palsu untuk menjalankan misi penting. Tanpa ia ketahui, anak angkatnya adalah seorang telepat dan istrinya adalah seorang pembunuh bayaran.', 'images/spyxfamily.jpg', 'videos/spyxfamily.mp4', '', '2026-06-24 11:10:56'),
-(3, 'Kimetsu no Yaiba', 'Action, Fantasy', 55, 'Ongoing', 'Mengisahkan Tanjiro Kamado yang berjuang menjadi pembasmi iblis setelah keluarganya dibantai oleh iblis dan adiknya, Nezuko, berubah menjadi iblis.', 'images/kimetsu.jpg', 'videos/kimetsu.mp4', '', '2026-06-24 11:10:56'),
-(4, 'One Piece', 'Adventure, Action', 1100, 'Ongoing', 'Menceritakan perjalanan Monkey D. Luffy dan kru Topi Jerami dalam mencari harta karun legendaris bernama One Piece untuk menjadi Raja Bajak Laut.', 'images/onepiece.jpg', 'videos/onepiece.mp4', '', '2026-06-24 11:10:56'),
-(5, 'Jujutsu Kaisen', 'Action, Supernatural', 47, 'Ongoing', 'Yuji Itadori terlibat dalam dunia kutukan setelah menelan jari Ryomen Sukuna. Ia kemudian bergabung dengan sekolah Jujutsu untuk melawan roh-roh kutukan berbahaya.', 'assets/jujutsukaisen/JujutsuKaisen_thumbnail.jpg\r\n', 'assets/jujutsukaisen/JujutsuKaisen_eps1.mp4\r\n', 'assets/jujutsukaisen/', '2026-06-24 11:10:56'),
+(1, 'Naruto Shippuden', 'Action, Adventure', 500, 'Completed', 'menceritakan petualangan Naruto Uzumaki remaja yang kembali ke Desa Konoha setelah dua setengah tahun berlatih intensif. Ia harus menyelamatkan sahabatnya, Sasuke Uchiha, dari cengkeraman balas dendam, sekaligus menghadapi ancaman global dari organisasi kriminal ninja yang sangat berbahaya, Akatsuki', 'assets/narutoshippuden/NarutoShippuden_thumbnail.jpeg', 'videos/naruto.mp4', 'assets/narutoshippuden/', '2026-06-24 11:10:56'),
+(2, 'Spy x Family', 'Action, Comedy', 12, 'Completed', 'Menceritakan mata-mata bernama Loid Forger yang harus membentuk keluarga palsu untuk menjalankan misi penting. Tanpa ia ketahui, anak angkatnya adalah seorang telepat dan istrinya adalah seorang pembunuh bayaran.', 'assets/spyxfamily/SpyxFamily_thumbnail.jpeg', 'assets/spyxfamily/SpyxFamily_eps1.mp4', 'assets/spyxfamily/', '2026-06-24 11:10:56'),
+(3, 'Kimetsu no Yaiba', 'Action, Fantasy', 26, 'Completed', 'Mengisahkan Tanjiro Kamado yang berjuang menjadi pembasmi iblis setelah keluarganya dibantai oleh iblis dan adiknya, Nezuko, berubah menjadi iblis.', 'assets/kimetsunoyaiba/KimetsuNoYaiba_thumbnail.jpeg', 'videos/kimetsu.mp4', 'assets/kimetsunoyaiba/', '2026-06-24 11:10:56'),
+(4, 'One Piece', 'Adventure, Action', 1100, 'Ongoing', 'Menceritakan perjalanan Monkey D. Luffy dan kru Topi Jerami dalam mencari harta karun legendaris bernama One Piece untuk menjadi Raja Bajak Laut.', 'assets/onepiece/OnePiece_thumbnail.jpeg', 'videos/onepiece.mp4', 'assets/onepiece/', '2026-06-24 11:10:56'),
+(5, 'Jujutsu Kaisen', 'Action, Supernatural', 24, 'Completed', 'Yuji Itadori terlibat dalam dunia kutukan setelah menelan jari Ryomen Sukuna. Ia kemudian bergabung dengan sekolah Jujutsu untuk melawan roh-roh kutukan berbahaya.', 'assets/jujutsukaisen/JujutsuKaisen_thumbnail.jpeg\r\n', 'assets/jujutsukaisen/JujutsuKaisen_eps1.mp4\r\n', 'assets/jujutsukaisen/', '2026-06-24 11:10:56'),
 (6, 'Kaichou wa Maid-sama!', 'Comedy, Romance', 26, 'Completed', 'Misaki Ayuzawa adalah ketua OSIS yang tegas di sekolah yang didominasi laki-laki. Rahasianya bekerja paruh waktu di sebuah maid cafe diketahui oleh Usui Takumi, siswa paling populer di sekolah.', 'assets/kaichouwamaidsama/KaichouWaMaidSama_thumbnail.jpg', 'assets/kaichouwamaidsama/KaichouWaMaidSama_eps1.mp4', 'assets/kaichouwamaidsama/', '2026-06-24 11:10:56');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- Struktur dari tabel `users`
 --
 
 CREATE TABLE `users` (
@@ -66,19 +66,20 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- Dumping data untuk tabel `users`
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
 (1, 'mimin', 'admin1234', 'Admin'),
 (2, 'user', 'user1234', 'User'),
 (3, 'Usui Takumi', 'Misa-Chan', 'User'),
-(4, 'Misaki Ayuzawa', 'ahousuii', 'user');
+(4, 'Misaki Ayuzawa', 'ahousuii', 'user'),
+(5, 'kazuha', 'seika123', 'user');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `watched`
+-- Struktur dari tabel `watched`
 --
 
 CREATE TABLE `watched` (
@@ -89,7 +90,7 @@ CREATE TABLE `watched` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `watched`
+-- Dumping data untuk tabel `watched`
 --
 
 INSERT INTO `watched` (`id`, `user_id`, `anime_id`, `watched_at`) VALUES
@@ -147,27 +148,50 @@ INSERT INTO `watched` (`id`, `user_id`, `anime_id`, `watched_at`) VALUES
 (52, 3, 6, '2026-06-26 11:13:29'),
 (53, 3, 6, '2026-06-26 11:13:32'),
 (54, 3, 4, '2026-06-26 11:13:36'),
-(55, 3, 6, '2026-06-26 11:14:18');
+(55, 3, 6, '2026-06-26 11:14:18'),
+(56, 3, 6, '2026-06-26 15:09:06'),
+(57, 3, 6, '2026-06-26 15:11:08'),
+(58, 3, 6, '2026-06-26 15:33:41'),
+(59, 4, 2, '2026-06-26 16:28:08'),
+(60, 2, 2, '2026-06-26 16:29:20'),
+(61, 2, 6, '2026-06-26 16:35:50'),
+(62, 2, 6, '2026-06-26 16:37:32'),
+(63, 2, 2, '2026-06-26 16:37:45'),
+(64, 2, 5, '2026-06-26 17:06:52'),
+(65, 3, 6, '2026-06-27 06:06:50'),
+(66, 4, 6, '2026-06-27 06:20:04'),
+(67, 4, 6, '2026-06-27 06:20:06'),
+(68, 2, 6, '2026-06-27 06:48:47'),
+(69, 2, 6, '2026-06-27 06:48:56'),
+(70, 2, 6, '2026-06-27 09:50:59'),
+(71, 2, 3, '2026-06-27 09:57:28'),
+(72, 2, 4, '2026-06-27 09:57:32'),
+(73, 2, 6, '2026-06-27 09:57:35'),
+(74, 2, 2, '2026-06-27 09:57:39'),
+(75, 2, 1, '2026-06-27 09:57:42'),
+(76, 2, 6, '2026-06-27 09:58:17'),
+(77, 2, 6, '2026-06-27 09:58:19'),
+(78, 2, 2, '2026-06-27 10:00:12');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `anime`
+-- Indeks untuk tabel `anime`
 --
 ALTER TABLE `anime`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `users`
+-- Indeks untuk tabel `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `username` (`username`);
 
 --
--- Indexes for table `watched`
+-- Indeks untuk tabel `watched`
 --
 ALTER TABLE `watched`
   ADD PRIMARY KEY (`id`),
@@ -175,33 +199,33 @@ ALTER TABLE `watched`
   ADD KEY `anime_id` (`anime_id`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT untuk tabel yang dibuang
 --
 
 --
--- AUTO_INCREMENT for table `anime`
+-- AUTO_INCREMENT untuk tabel `anime`
 --
 ALTER TABLE `anime`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
--- AUTO_INCREMENT for table `users`
+-- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `watched`
+-- AUTO_INCREMENT untuk tabel `watched`
 --
 ALTER TABLE `watched`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=79;
 
 --
--- Constraints for dumped tables
+-- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
 --
 
 --
--- Constraints for table `watched`
+-- Ketidakleluasaan untuk tabel `watched`
 --
 ALTER TABLE `watched`
   ADD CONSTRAINT `watched_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),

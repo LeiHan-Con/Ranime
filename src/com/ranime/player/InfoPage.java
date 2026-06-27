@@ -3,13 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.ranime.player;
+import LoginRegister.UserSession;
 
 /**
  *
  * @author Rivaldo
  */
 public class InfoPage extends javax.swing.JFrame {
-    
+     private int animeId;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(InfoPage.class.getName());
 
     /**
@@ -20,13 +21,17 @@ public class InfoPage extends javax.swing.JFrame {
     }
     
     // 1. Method untuk menerima data dari HomePage
-    public void muatDataInfo(String judul, String genre, String totalEpisode, String status, String sinopsis, String imagePath, String folderPath) {
-        // Set Teks ke Label sesuai nama variabel di Navigator kamu
+    public void muatDataInfo(int animeId, String judul, String genre,
+        String totalEpisode, String status,
+        String sinopsis, String imagePath, String folderPath) {
+
+        this.animeId = animeId;
+
         lblJudul.setText(judul);
         lblGenre.setText("Genre: " + genre);
         lblEpisode.setText("Total Episode: " + totalEpisode);
         lblStatus.setText("Status: " + status);
-        
+    
         // Trik khusus untuk Sinopsis agar teks panjang bisa turun baris (word wrap)
         lblTextSinopsis.setText("<html><p style=\"width:450px\">" + sinopsis + "</p></html>");
 
@@ -84,6 +89,7 @@ public class InfoPage extends javax.swing.JFrame {
                     // Pasang aksi ketika tombol diklik
                     final String finalEpsAngka = epsAngka;
                     btnEps.addActionListener(evt -> {
+                         WatchedBase.saveWatched(UserSession.getId(), animeId);
                         // Buka PlayPage dengan video spesifik ini
                         PlayPage pemutar = new PlayPage(file.getAbsolutePath());
                         pemutar.updateInfoAnime(judul, genre, finalEpsAngka, imagePath);

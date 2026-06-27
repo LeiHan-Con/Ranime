@@ -10,6 +10,20 @@ package com.ranime.player;
  */
 import javax.swing.JOptionPane;
 import LoginRegister.LoginForm;
+import javax.swing.JOptionPane;
+import LoginRegister.LoginForm;
+import LoginRegister.Konek;
+import LoginRegister.UserSession;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class Watched extends javax.swing.JFrame {
     
@@ -20,8 +34,84 @@ public class Watched extends javax.swing.JFrame {
      */
     public Watched() {
         initComponents();
+        jPanel2.setLayout(new java.awt.FlowLayout(
+                java.awt.FlowLayout.LEFT,20,20));
+
+            loadWatched();
+    }
+    
+private void loadWatched() {
+
+    try {
+
+        Connection conn = Konek.connect();
+
+        String sql =
+        "SELECT a.* " +
+        "FROM watched w " +
+        "JOIN anime a ON w.anime_id=a.id " +
+        "WHERE w.user_id=? " +
+        "ORDER BY watched_at DESC";
+
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, UserSession.getId());
+
+        ResultSet rs = ps.executeQuery();
+
+        jPanel2.removeAll();
+
+        while(rs.next()){
+
+            String judul = rs.getString("judul");
+            String gambar = rs.getString("image_path");
+
+            JPanel card = new JPanel(new BorderLayout());
+            card.setPreferredSize(new Dimension(220,250));
+            card.setBackground(Color.DARK_GRAY);
+
+            JButton poster = new JButton();
+
+            try{
+
+                javax.swing.ImageIcon icon =
+                        new javax.swing.ImageIcon(gambar);
+
+                java.awt.Image img =
+                        icon.getImage().getScaledInstance(
+                                220,
+                                200,
+                                java.awt.Image.SCALE_SMOOTH);
+
+                poster.setIcon(new javax.swing.ImageIcon(img));
+
+            }catch(Exception ex){
+
+                poster.setText("No Image");
+
+            }
+
+            JLabel lbl =
+                    new JLabel(judul,SwingConstants.CENTER);
+
+            lbl.setForeground(Color.WHITE);
+
+            card.add(poster,BorderLayout.CENTER);
+            card.add(lbl,BorderLayout.SOUTH);
+
+            jPanel2.add(card);
+
+        }
+
+        jPanel2.revalidate();
+        jPanel2.repaint();
+
+    }catch(Exception e){
+
+        e.printStackTrace();
+
     }
 
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

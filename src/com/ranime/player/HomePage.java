@@ -107,7 +107,7 @@ public class HomePage extends javax.swing.JFrame {
                     System.out.println("Membuka info untuk: " + judul);
                     InfoPage info = new InfoPage();
                     // Kirim semua data yang diambil tadi ke InfoPage
-                    info.muatDataInfo(judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
+                    info.muatDataInfo(idAnime, judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
                     info.setVisible(true); 
 
                 });

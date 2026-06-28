@@ -61,7 +61,7 @@
                   <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
                   <Component id="btnHome" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="85" max="-2" attributes="0"/>
-                  <Component id="btBbookmarks" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnBookmarks" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="80" max="-2" attributes="0"/>
                   <Component id="btnWatched" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
@@ -79,7 +79,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="lblLogo" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnHome" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="btBbookmarks" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnBookmarks" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnWatched" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnLogout" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="lblUsername" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -112,7 +112,7 @@
             <Property name="text" type="java.lang.String" value="Home"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="btBbookmarks">
+        <Component class="javax.swing.JLabel" name="btnBookmarks">
           <Properties>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -120,7 +120,7 @@
             <Property name="text" type="java.lang.String" value="Bookmarks"/>
           </Properties>
           <Events>
-            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btBbookmarksMouseClicked"/>
+            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnBookmarksMouseClicked"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="btnWatched">

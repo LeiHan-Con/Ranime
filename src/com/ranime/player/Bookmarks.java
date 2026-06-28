@@ -4,24 +4,22 @@
  */
 package com.ranime.player;
 
+import com.ranime.database.Konek;
+import com.ranime.auth.LoginForm;
+import com.ranime.auth.UserSession;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-
-import LoginRegister.LoginForm;
-import LoginRegister.UserSession;
-import LoginRegister.Konek;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.*;
 
 /**
  *
  * @author Rivaldo
  */
-public class Bookmarks extends javax.swing.JFrame {
+public class Bookmarks extends BasePage {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Bookmarks.class.getName());
 
@@ -33,8 +31,144 @@ public class Bookmarks extends javax.swing.JFrame {
         
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
+        
+        setupNavigasi();
+        loadData();
     }
     
+    @Override
+    public void setupNavigasi() {
+        btnHome.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new HomePage().setVisible(true);
+            }
+        });
+
+        btnWatched.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new Watched().setVisible(true);
+            }
+        });
+
+        btnLogout.addActionListener(evt -> {
+            int pilihan = JOptionPane.showConfirmDialog(null, "Yakin Logout?", "Logout", JOptionPane.YES_NO_OPTION);
+            if(pilihan == JOptionPane.YES_OPTION){
+                UserSession.clear();
+                closePage();
+                new LoginForm().setVisible(true);
+            }
+        });
+    }
+
+    @Override
+    public void loadData() {
+        muatKatalogBookmarks();
+    }
+
+    private void muatKatalogBookmarks() {
+        try {
+            Connection conn = Konek.connect();
+            // INNER JOIN hanya menampilkan anime yang ada di tabel bookmarks user ini
+            String sql = "SELECT a.* FROM anime a " +
+                         "INNER JOIN bookmarks b ON a.id = b.anime_id " +
+                         "WHERE b.user_id = ?";
+            
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, UserSession.getId());
+            ResultSet rs = ps.executeQuery();
+
+            panelKatalog.removeAll();
+
+            while (rs.next()) {
+                
+                String genre = rs.getString("genre");
+                String totalEpisode = String.valueOf(rs.getInt("episode"));
+                String status = rs.getString("status");
+                String sinopsis = rs.getString("sinopsis");
+                String folderPath = rs.getString("folder_path");
+                
+                int idAnime = rs.getInt("id");
+                String judul = rs.getString("judul");
+                String imgPath = rs.getString("image_path");
+
+                // Layout Item (Sama dengan HomePage)
+                JPanel panelItem = new JPanel(new BorderLayout());
+                panelItem.setPreferredSize(new Dimension(295, 240));
+                panelItem.setBackground(new Color(45, 45, 45));
+
+                JButton btnThumb = new JButton();
+                btnThumb.setPreferredSize(new Dimension(295, 190));
+                try {
+                    ImageIcon icon = new ImageIcon(imgPath);
+                    btnThumb.setIcon(new ImageIcon(icon.getImage().getScaledInstance(295, 190, java.awt.Image.SCALE_SMOOTH)));
+                } catch (Exception ex) { btnThumb.setText("Poster"); }
+                
+                // --- TAMBAHKAN LOGIKA KLIK DI SINI ---
+                btnThumb.addActionListener(evt -> {
+                    // 1. Catat riwayat tontonan
+                    try {
+                        java.sql.Connection connHist = Konek.connect();
+                        String sqlInsert = "INSERT INTO watched (user_id, anime_id) VALUES (?, ?)";
+                        java.sql.PreparedStatement psInsert = connHist.prepareStatement(sqlInsert);
+                        psInsert.setInt(1, UserSession.getId());
+                        psInsert.setInt(2, idAnime);
+                        psInsert.executeUpdate();
+                    } catch (Exception e) { System.out.println("Gagal mencatat riwayat: " + e.getMessage()); }
+
+                    // 2. Arahkan ke InfoPage
+                    InfoPage info = new InfoPage();
+                    info.muatDataInfo(idAnime, judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
+                    info.setVisible(true);
+                });
+
+                // Panel Judul & Bintang
+                JPanel panelBawah = new JPanel(new BorderLayout(10, 0));
+                panelBawah.setBackground(new Color(45, 45, 45));
+                panelBawah.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+
+                JLabel lblJudul = new JLabel(judul);
+                lblJudul.setForeground(Color.WHITE);
+                lblJudul.setFont(new java.awt.Font("Segoe UI", 1, 14));
+
+                JLabel lblBintang = new JLabel("★", SwingConstants.CENTER);
+                lblBintang.setFont(new java.awt.Font("Dialog", 1, 24));
+                lblBintang.setForeground(Color.YELLOW); // Di halaman Bookmarks, bintang selalu kuning
+                lblBintang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+
+                // Logika Hapus Bookmark
+                lblBintang.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        hapusBookmark(idAnime);
+                        panelKatalog.remove(panelItem);
+                        panelKatalog.revalidate();
+                        panelKatalog.repaint();
+                    }
+                });
+
+                panelBawah.add(lblJudul, BorderLayout.CENTER);
+                panelBawah.add(lblBintang, BorderLayout.EAST);
+
+                panelItem.add(btnThumb, BorderLayout.CENTER);
+                panelItem.add(panelBawah, BorderLayout.SOUTH);
+
+                panelKatalog.add(panelItem);
+            }
+            panelKatalog.revalidate();
+            panelKatalog.repaint();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void hapusBookmark(int animeId) {
+        try {
+            Connection conn = Konek.connect();
+            PreparedStatement ps = conn.prepareStatement("DELETE FROM bookmarks WHERE user_id=? AND anime_id=?");
+            ps.setInt(1, UserSession.getId());
+            ps.setInt(2, animeId);
+            ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); }
+    }  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -175,20 +309,14 @@ public class Bookmarks extends javax.swing.JFrame {
 
     private void btnWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWatchedMouseClicked
         // TODO add your handling code here:
-        this.dispose();                           
-        new Watched().setVisible(true); 
     }//GEN-LAST:event_btnWatchedMouseClicked
 
     private void btnBookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBookmarksMouseClicked
-        // TODO add your handling code here:
-        this.dispose();                          
-        new Bookmarks().setVisible(true); 
+        // TODO add your handling code here:                         
     }//GEN-LAST:event_btnBookmarksMouseClicked
 
     private void btnHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHomeMouseClicked
         // TODO add your handling code here:
-        this.dispose();
-        new HomePage().setVisible(true);
     }//GEN-LAST:event_btnHomeMouseClicked
 
     /**

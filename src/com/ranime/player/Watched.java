@@ -9,11 +9,11 @@ package com.ranime.player;
  * @author Hype GLK
  */
 import javax.swing.JOptionPane;
-import LoginRegister.LoginForm;
+import com.ranime.auth.LoginForm;
 import javax.swing.JOptionPane;
-import LoginRegister.LoginForm;
-import LoginRegister.Konek;
-import LoginRegister.UserSession;
+import com.ranime.auth.LoginForm;
+import com.ranime.database.Konek;
+import com.ranime.auth.UserSession;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-public class Watched extends javax.swing.JFrame {
+public class Watched extends BasePage {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Watched.class.getName());
 
@@ -45,7 +45,13 @@ public class Watched extends javax.swing.JFrame {
         
         // 3. Atur ukuran lebar mengikuti HomePage (1320), tingginya dilebihkan agar bisa di-scroll
         jPanel2.setPreferredSize(new java.awt.Dimension(1320, 2000)); 
-
+        
+        setupNavigasi();
+        loadData();
+    }
+    
+    @Override
+    public void loadData(){
         loadWatched();
     }
     
@@ -54,12 +60,13 @@ public class Watched extends javax.swing.JFrame {
             Connection conn = Konek.connect();
 
             // Tambahkan w.episode_tonton di bagian SELECT
-            String sql =
-                "SELECT a.*, w.episode_tonton, w.watched_at " +
-                "FROM watched w " +
-                "JOIN anime a ON w.anime_id=a.id " +
-                "WHERE w.user_id=? AND w.episode_tonton IS NOT NULL " + // Tambahkan ini
-                "ORDER BY w.watched_at DESC";
+            // Query ini akan mengambil baris unik berdasarkan user, anime, dan episode
+            String sql = "SELECT a.*, w.episode_tonton, MAX(w.watched_at) as last_watched " +
+                         "FROM watched w " +
+                         "JOIN anime a ON w.anime_id = a.id " +
+                         "WHERE w.user_id = ? " +
+                         "GROUP BY w.anime_id, w.episode_tonton " +
+                         "ORDER BY last_watched DESC";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserSession.getId());
             ResultSet rs = ps.executeQuery();
@@ -116,6 +123,51 @@ public class Watched extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    
+    @Override
+    public void setupNavigasi() {
+        // 1. Aksi Navigasi ke Home
+        btnHome.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new HomePage().setVisible(true);
+            }
+        });
+
+        // 2. Aksi Navigasi ke Bookmarks
+        btnBookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new Bookmarks().setVisible(true);
+            }
+        });
+
+        // 3. Aksi Navigasi ke Watched
+        btnWatched.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                closePage();
+                new Watched().setVisible(true);
+            }
+        });
+
+        // 4. Aksi Logout
+        btnLogout.addActionListener(evt -> {
+            int pilihan = javax.swing.JOptionPane.showConfirmDialog(null, 
+                    "Apakah Anda yakin ingin logout?", 
+                    "Konfirmasi Logout", 
+                    javax.swing.JOptionPane.YES_NO_OPTION);
+
+            if(pilihan == javax.swing.JOptionPane.YES_OPTION){
+                com.ranime.auth.UserSession.clear();
+                closePage();
+                new com.ranime.auth.LoginForm().setVisible(true);
+            }
+        });
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -254,33 +306,18 @@ public class Watched extends javax.swing.JFrame {
 
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         // TODO add your handling code here:
-        int pilihan = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin logout?",
-            "Konfirmasi Logout",
-            JOptionPane.YES_NO_OPTION);
-
-        if(pilihan == JOptionPane.YES_OPTION){
-            UserSession.clear();
-            this.dispose();
-            new LoginForm().setVisible(true);
-        }
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWatchedMouseClicked
         // TODO add your handling code here:
-        this.dispose();
-        new Watched().setVisible(true);
     }//GEN-LAST:event_btnWatchedMouseClicked
 
     private void btnBookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBookmarksMouseClicked
         // TODO add your handling code here:
-        this.dispose();
-        new Bookmarks().setVisible(true);
     }//GEN-LAST:event_btnBookmarksMouseClicked
 
     private void btnHomeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnHomeMouseClicked
         // TODO add your handling code here:
-        this.dispose();
-        new HomePage().setVisible(true);
     }//GEN-LAST:event_btnHomeMouseClicked
 
     /**

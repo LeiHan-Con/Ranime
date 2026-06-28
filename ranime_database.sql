@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 27, 2026 at 04:49 PM
+-- Generation Time: Jun 28, 2026 at 09:01 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -55,6 +55,30 @@ INSERT INTO `anime` (`id`, `judul`, `genre`, `episode`, `status`, `sinopsis`, `i
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bookmarks`
+--
+
+CREATE TABLE `bookmarks` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `anime_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `bookmarks`
+--
+
+INSERT INTO `bookmarks` (`id`, `user_id`, `anime_id`) VALUES
+(23, 6, 2),
+(31, 6, 6),
+(32, 6, 5),
+(33, 8, 6),
+(34, 9, 6),
+(35, 7, 6);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -77,7 +101,8 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
 (5, 'kazuha', 'seika123', 'user'),
 (6, 'Aldo', '12345678', 'user'),
 (7, 'Aldo1', '12345678', 'user'),
-(8, 'test', '123123123', 'user');
+(8, 'test', '123123123', 'user'),
+(9, 'Rayhan', '123123123', 'user');
 
 -- --------------------------------------------------------
 
@@ -98,21 +123,9 @@ CREATE TABLE `watched` (
 --
 
 INSERT INTO `watched` (`id`, `user_id`, `anime_id`, `episode_tonton`, `watched_at`) VALUES
-(140, 6, 6, '1', '2026-06-27 14:13:00'),
-(142, 8, 6, NULL, '2026-06-27 14:17:00'),
-(144, 8, 6, NULL, '2026-06-27 14:17:15'),
-(146, 8, 6, NULL, '2026-06-27 14:17:25'),
-(148, 8, 6, NULL, '2026-06-27 14:18:47'),
-(150, 8, 6, NULL, '2026-06-27 14:19:59'),
-(152, 8, 6, NULL, '2026-06-27 14:45:30'),
-(154, 8, 6, NULL, '2026-06-27 14:46:00'),
-(155, 8, 2, NULL, '2026-06-27 14:46:07'),
-(156, 8, 3, NULL, '2026-06-27 14:46:10'),
-(157, 8, 6, NULL, '2026-06-27 14:46:13'),
-(158, 8, 6, '1', '2026-06-27 14:46:14'),
-(159, 8, 6, NULL, '2026-06-27 14:47:15'),
-(160, 8, 6, '2', '2026-06-27 14:47:17'),
-(161, 8, 4, NULL, '2026-06-27 14:47:49');
+(192, 7, 6, '2', '2026-06-28 06:46:00'),
+(193, 7, 6, '1', '2026-06-28 06:45:56'),
+(195, 6, 6, '1', '2026-06-28 06:52:03');
 
 --
 -- Indexes for dumped tables
@@ -123,6 +136,13 @@ INSERT INTO `watched` (`id`, `user_id`, `anime_id`, `episode_tonton`, `watched_a
 --
 ALTER TABLE `anime`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `anime_id` (`anime_id`);
 
 --
 -- Indexes for table `users`
@@ -136,6 +156,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `watched`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_tontonan` (`user_id`,`anime_id`,`episode_tonton`),
   ADD KEY `user_id` (`user_id`),
   ADD KEY `anime_id` (`anime_id`);
 
@@ -150,20 +171,32 @@ ALTER TABLE `anime`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
+-- AUTO_INCREMENT for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `watched`
 --
 ALTER TABLE `watched`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=196;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `bookmarks`
+--
+ALTER TABLE `bookmarks`
+  ADD CONSTRAINT `bookmarks_ibfk_1` FOREIGN KEY (`anime_id`) REFERENCES `anime` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `watched`

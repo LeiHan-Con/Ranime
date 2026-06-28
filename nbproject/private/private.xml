@@ -3,12 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/LoginRegister/UserSession.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/LoginRegister/LoginForm.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/com/ranime/player/HomePage.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/com/ranime/player/VideoPlayer.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/com/ranime/player/PlayPage.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V2/src/com/ranime/player/InfoPage.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/HomePage.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Bookmarks.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Watched.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/WatchedBase.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/InfoPage.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/PlayPage.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/VideoPlayer.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Anime.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/BasePage.java</file>
         </group>
     </open-files>
 </project-private>

@@ -3,7 +3,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.ranime.player;
-import LoginRegister.UserSession;
+import com.ranime.dao.WatchedBase;
+import com.ranime.auth.UserSession;
 
 /**
  *
@@ -94,12 +95,11 @@ public class InfoPage extends javax.swing.JFrame {
                     btnEps.addActionListener(evt -> {
                         // Kodingan lama
                         // Kodingan baru (tambahkan finalEpsAngka)
-                        WatchedBase.saveWatched(LoginRegister.UserSession.getId(), animeId, finalEpsAngka);
+                        WatchedBase.saveWatched(com.ranime.auth.UserSession.getId(), animeId, finalEpsAngka);
                         // Buka PlayPage dengan video spesifik ini
-                        PlayPage pemutar = new PlayPage(file.getAbsolutePath());
-                        
-                        pemutar.setJudulPage(judul, Integer.parseInt(finalEpsAngka));
-                        
+                        PlayPage pemutar = new PlayPage(file.getAbsolutePath());                        
+                        pemutar.setIdAnime(this.animeId);                        
+                        pemutar.setJudulPage(judul, Integer.parseInt(finalEpsAngka));                      
                         pemutar.updateInfoAnime(judul, genre, finalEpsAngka, imagePath);
                         pemutar.setVisible(true);
                     });
@@ -118,7 +118,7 @@ public class InfoPage extends javax.swing.JFrame {
         panelEpisode.revalidate();
         panelEpisode.repaint();
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -139,6 +139,7 @@ public class InfoPage extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         lblThumbnail.setText("Thumbnail");
 
@@ -237,6 +238,7 @@ public class InfoPage extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

@@ -2,30 +2,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package LoginRegister;
+package com.ranime.auth;
+
+import com.ranime.database.Konek;
+import javax.swing.JOptionPane;
+import com.ranime.player.HomePage;
 
 /**
  *
  * @author Hype GLK
  */
-
-import LoginRegister.LoginForm;
-import LoginRegister.Konek;
-import java.sql.PreparedStatement;
-import java.sql.Connection;
-import java.awt.Color;
-import javax.swing.JOptionPane;
-import java.sql.SQLException;
-import java.sql.DriverManager;
-
-public class Registerform extends javax.swing.JFrame {
+public class LoginForm extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Registerform.class.getName());
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(LoginForm.class.getName());
 
     /**
-     * Creates new form Registerform
+     * Creates new form LoginForm
      */
-    public Registerform() {
+    public LoginForm() {
         initComponents();
     }
 
@@ -45,17 +39,20 @@ public class Registerform extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jPasswordField1 = new javax.swing.JPasswordField();
         jCheckBox1 = new javax.swing.JCheckBox();
-        jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        Logindash = new javax.swing.JLabel();
+        RegisterDash = new javax.swing.JLabel();
+        jToggleButton1 = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Register Page");
+        setTitle("Login Page");
+        setBackground(new java.awt.Color(255, 255, 204));
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel2.setPreferredSize(new java.awt.Dimension(529, 299));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("USERNAME");
@@ -70,19 +67,18 @@ public class Registerform extends javax.swing.JFrame {
         jCheckBox1.setText("Show Password");
         jCheckBox1.addActionListener(this::jCheckBox1ActionPerformed);
 
-        jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        jButton1.setText("Register");
-        jButton1.addActionListener(this::jButton1ActionPerformed);
+        jLabel4.setText("Doesn't have an account?");
 
-        jLabel4.setText("Already have an account?");
-
-        Logindash.setForeground(new java.awt.Color(0, 102, 255));
-        Logindash.setText("Login");
-        Logindash.addMouseListener(new java.awt.event.MouseAdapter() {
+        RegisterDash.setForeground(new java.awt.Color(0, 102, 255));
+        RegisterDash.setText("Register");
+        RegisterDash.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                LogindashMouseClicked(evt);
+                RegisterDashMouseClicked(evt);
             }
         });
+
+        jToggleButton1.setText("Login");
+        jToggleButton1.addActionListener(this::jToggleButton1ActionPerformed);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -92,24 +88,24 @@ public class Registerform extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(Logindash)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 147, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(83, 83, 83))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(48, 48, 48)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jTextField1)
+                            .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jCheckBox1)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel2)
-                                    .addComponent(jLabel3))
-                                .addGap(50, 50, 50)
-                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jPasswordField1, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                                    .addComponent(jTextField1))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(jLabel4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(RegisterDash)))
+                        .addGap(147, 147, 147)
+                        .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(83, 83, 83))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -118,7 +114,7 @@ public class Registerform extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                .addGap(28, 28, 28)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -126,15 +122,15 @@ public class Registerform extends javax.swing.JFrame {
                 .addComponent(jCheckBox1)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(Logindash))
-                .addContainerGap(56, Short.MAX_VALUE))
+                    .addComponent(RegisterDash)
+                    .addComponent(jToggleButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Register");
+        jLabel1.setText("Login");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -142,20 +138,20 @@ public class Registerform extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(216, 216, 216)
-                .addComponent(jLabel1)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(245, 245, 245))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
                 .addComponent(jLabel1)
-                .addGap(30, 30, 30)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -184,6 +180,10 @@ public class Registerform extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
+    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jPasswordField1ActionPerformed
+
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
         // TODO add your handling code here:
         if(jCheckBox1.isSelected()){
@@ -193,64 +193,63 @@ public class Registerform extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
-    private void jPasswordField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordField1ActionPerformed
+    private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordField1ActionPerformed
+        try {
+        String username = jTextField1.getText();
+        String password = new String(jPasswordField1.getPassword());
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-          try {
-            // ambil input
-            String username = jTextField1.getText();
-            String password = new String(jPasswordField1.getPassword());
-
-            // VALIDASI
-            if(username.isEmpty() || password.isEmpty()){
-                JOptionPane.showMessageDialog(this, "Data tidak boleh kosong!");
-                return;
-            }
-
-            if(password.length() < 8){
-                JOptionPane.showMessageDialog(this, "Password minimal 8 karakter!");
-                return;
-            }
-
-            // koneksi ke database
-            java.sql.Connection conn = Konek.connect();
-
-            // cek username
-            String cek = "SELECT * FROM users WHERE username=?";
-            java.sql.PreparedStatement ps = conn.prepareStatement(cek);
-            ps.setString(1, username);
-            java.sql.ResultSet rs = ps.executeQuery();
-
-            if(rs.next()){
-                JOptionPane.showMessageDialog(this, "Username sudah digunakan!");
-                return;
-            }
-
-            // insert data
-            String insert = "INSERT INTO users(username, password, role) VALUES (?, ?, 'user')";
-            java.sql.PreparedStatement ps2 = conn.prepareStatement(insert);
-            ps2.setString(1, username);
-            ps2.setString(2, password);
-            ps2.executeUpdate();
-
-            JOptionPane.showMessageDialog(this, "Register berhasil!");
-            
-            this.dispose();
-            new LoginForm().setVisible(true);
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        if(username.isEmpty() || password.isEmpty()){
+            javax.swing.JOptionPane.showMessageDialog(this, "Harap isi semua field!");
+            return;
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void LogindashMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogindashMouseClicked
+        java.sql.Connection conn = Konek.connect();
+
+        if(conn == null){
+            javax.swing.JOptionPane.showMessageDialog(this, "Koneksi gagal!");
+            return;
+        }
+
+        String sql = "SELECT * FROM users WHERE username=? AND password=?";
+        java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, username);
+        ps.setString(2, password);
+
+        java.sql.ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            // 1. Ambil data user dari database berdasarkan nama kolomnya
+            int idUser = rs.getInt("id");
+            String namaUser = rs.getString("username");
+            String roleUser = rs.getString("role");
+
+            // 2. Masukkan data tersebut ke dalam brankas UserSession
+            UserSession.setId(idUser);
+            UserSession.setUsername(namaUser);
+            UserSession.setRole(roleUser);
+
+            // 3. Tampilkan pesan sukses dan buka HomePage
+            JOptionPane.showMessageDialog(this, "Login Berhasil! Selamat datang, " + namaUser);
+            this.dispose();
+            new HomePage().setVisible(true); 
+            
+        } else {
+            JOptionPane.showMessageDialog(this, "Username atau Password salah!");
+        }
+            
+
+    }catch (Exception e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+    }
+    
+    }//GEN-LAST:event_jToggleButton1ActionPerformed
+
+    private void RegisterDashMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RegisterDashMouseClicked
         // TODO add your handling code here:
-        this.dispose(); // tutup register                           
-        new LoginForm().setVisible(true); // buka form login
-    }//GEN-LAST:event_LogindashMouseClicked
+         this.dispose(); // tutup register                           
+        new Registerform().setVisible(true); // buka form login
+    }//GEN-LAST:event_RegisterDashMouseClicked
 
     /**
      * @param args the command line arguments
@@ -274,12 +273,11 @@ public class Registerform extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new Registerform().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new LoginForm().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel Logindash;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel RegisterDash;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -289,5 +287,6 @@ public class Registerform extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JToggleButton jToggleButton1;
     // End of variables declaration//GEN-END:variables
 }

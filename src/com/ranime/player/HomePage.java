@@ -13,9 +13,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import LoginRegister.LoginForm;
-import LoginRegister.UserSession;
-import LoginRegister.Konek;
+import com.ranime.auth.LoginForm;
+import com.ranime.auth.UserSession;
+import com.ranime.database.Konek;
 
 /**
  *
@@ -32,7 +32,9 @@ public class HomePage extends BasePage {
         initComponents();
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
+        
         loadData();
+        setupNavigasi();
     }
     
     @Override
@@ -41,101 +43,119 @@ public class HomePage extends BasePage {
     }
     
     private void muatKatalogDinamis() {
-        try {
-            // 1. Panggil koneksi database dari class Konek
-            java.sql.Connection conn = Konek.connect();
-            if (conn == null) {
-                System.out.println("Gagal menyambung ke database saat memuat katalog.");
-                return;
+        // Menggunakan DAO untuk enkapsulasi data
+        com.ranime.dao.AnimeDAO dao = new com.ranime.dao.AnimeDAO();
+        java.util.List<com.ranime.model.Anime> daftarAnime = dao.getAllAnime();
+
+        panelKatalog.removeAll();
+
+        for (com.ranime.model.Anime a : daftarAnime) {
+            // --- B. BUAT KOTAK PEMBUNGKUS ITEM ---
+            javax.swing.JPanel panelItem = new javax.swing.JPanel();
+            panelItem.setLayout(new java.awt.BorderLayout());
+            panelItem.setPreferredSize(new java.awt.Dimension(295, 240));
+            panelItem.setBackground(new java.awt.Color(45, 45, 45));
+
+            // --- C. BUAT TOMBOL THUMBNAIL ---
+            javax.swing.JButton btnThumb = new javax.swing.JButton();
+            btnThumb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            try {
+                javax.swing.ImageIcon icon = new javax.swing.ImageIcon(a.getImagePath());
+                java.awt.Image img = icon.getImage().getScaledInstance(295, 190, java.awt.Image.SCALE_SMOOTH);
+                btnThumb.setIcon(new javax.swing.ImageIcon(img));
+                btnThumb.setText("");
+            } catch (Exception ex) {
+                btnThumb.setText("Poster");
             }
 
-            // 2. Tulis Query untuk mengambil seluruh data anime
-            String sql = "SELECT * FROM anime";
-            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
-            java.sql.ResultSet rs = ps.executeQuery();
+            // Event Klik Poster
+            btnThumb.addActionListener(evt -> {
 
-            // Bersihkan panel utama dulu agar tidak ada data lama yang menumpuk
-            panelKatalog.removeAll();
+                // Buka InfoPage
+                InfoPage info = new InfoPage();
+                info.muatDataInfo(a.getId(), a.getJudul(), a.getGenre(), 
+                                  String.valueOf(a.getEpisode()), a.getStatus(), 
+                                  a.getSinopsis(), a.getImagePath(), a.getFolderPath());
+                info.setVisible(true);
+            });
 
-            // 3. Lakukan perulangan (looping) untuk membaca baris demi baris dari MySQL
-            while (rs.next()) {
-                // --- A. AMBIL DATA DARI DATABASE ---
-                int idAnime = rs.getInt("id");
-                String judul = rs.getString("judul");
-                String genre = rs.getString("genre");
-                String totalEpisode = String.valueOf(rs.getInt("episode")); 
-                String status = rs.getString("status");     
-                String sinopsis = rs.getString("sinopsis"); 
-                String imgPath = rs.getString("image_path");
-                String folderPath = rs.getString("folder_path"); 
+            // --- D. PANEL BAWAH (JUDUL & BINTANG) ---
+            javax.swing.JPanel panelBawah = new javax.swing.JPanel(new java.awt.BorderLayout(10, 0));
+            panelBawah.setBackground(new java.awt.Color(45, 45, 45));
+            panelBawah.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
 
-                // --- B. BUAT KOTAK PEMBUNGKUS ITEM ---
-                javax.swing.JPanel panelItem = new javax.swing.JPanel();
-                panelItem.setLayout(new java.awt.BorderLayout()); 
-                panelItem.setPreferredSize(new java.awt.Dimension(295, 215)); 
-                panelItem.setBackground(new java.awt.Color(45, 45, 45)); // Warna background gelap agar elegan
+            javax.swing.JLabel lblJudul = new javax.swing.JLabel(a.getJudul(), javax.swing.SwingConstants.LEFT);
+            lblJudul.setForeground(java.awt.Color.WHITE);
+            lblJudul.setFont(new java.awt.Font("Segoe UI", 1, 14));
 
-                // --- C. BUAT TOMBOL THUMBNAIL ---
-                javax.swing.JButton btnThumb = new javax.swing.JButton();
-                btnThumb.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            javax.swing.JLabel lblBintang = new javax.swing.JLabel("★", javax.swing.SwingConstants.CENTER);
+            lblBintang.setFont(new java.awt.Font("Dialog", 1, 22));
+            lblBintang.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            lblBintang.setPreferredSize(new java.awt.Dimension(30, 30));
 
-                // (Opsional) Langsung pasang gambar dari database ke tombol
-                try {
-                    javax.swing.ImageIcon icon = new javax.swing.ImageIcon(imgPath);
-                    java.awt.Image img = icon.getImage().getScaledInstance(295, 190, java.awt.Image.SCALE_SMOOTH);
-                    btnThumb.setIcon(new javax.swing.ImageIcon(img));
-                    btnThumb.setText(""); 
-                } catch (Exception ex) {
-                    btnThumb.setText("Poster"); // Jika gambar gagal dimuat
-                }
+            // Status awal
+            final boolean[] isBookmarked = {isBookmarked(a.getId())};
+            lblBintang.setForeground(isBookmarked[0] ? java.awt.Color.YELLOW : java.awt.Color.GRAY);
 
-                // --- D. EVENT KLIK TOMBOL (BUKA INFOPAGE) ---
-                // Kita pakai lambda 'evt ->' agar variabel dari database bisa langsung dibaca
-                btnThumb.addActionListener(evt -> {
-
-                    // 1. KODE MENCATAT HISTORY KE DATABASE
-                    try {
-                        java.sql.Connection connHist = Konek.connect();
-                        String sqlInsert = "INSERT INTO watched (user_id, anime_id) VALUES (?, ?)";
-                        java.sql.PreparedStatement psInsert = connHist.prepareStatement(sqlInsert);
-
-                        psInsert.setInt(1, UserSession.getId()); 
-                        psInsert.setInt(2, idAnime); 
-
-                        psInsert.executeUpdate();
-                        System.out.println("Riwayat berhasil dicatat untuk anime ID: " + idAnime);
-                    } catch (Exception e) {
-                        System.out.println("Gagal mencatat riwayat: " + e.getMessage());
+            lblBintang.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    if (isBookmarked[0]) {
+                        hapusBookmark(a.getId());
+                        lblBintang.setForeground(java.awt.Color.GRAY);
+                        isBookmarked[0] = false;
+                    } else {
+                        simpanBookmark(a.getId());
+                        lblBintang.setForeground(java.awt.Color.YELLOW);
+                        isBookmarked[0] = true;
                     }
+                }
+            });
 
-                    // 2. KODE MEMBUKA INFO PAGE (Bukan PlayPage!)
-                    System.out.println("Membuka info untuk: " + judul);
-                    InfoPage info = new InfoPage();
-                    // Kirim semua data yang diambil tadi ke InfoPage
-                    info.muatDataInfo(idAnime, judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
-                    info.setVisible(true); 
+            panelBawah.add(lblJudul, java.awt.BorderLayout.CENTER);
+            panelBawah.add(lblBintang, java.awt.BorderLayout.EAST);
 
-                });
-
-                // --- E. BUAT TEKS JUDUL BAWAH ---
-                javax.swing.JLabel lblJudul = new javax.swing.JLabel(judul, javax.swing.SwingConstants.CENTER);
-                lblJudul.setForeground(java.awt.Color.WHITE);
-
-                // --- F. SUSUN KE DALAM PANEL ---
-                panelItem.add(btnThumb, java.awt.BorderLayout.CENTER);
-                panelItem.add(lblJudul, java.awt.BorderLayout.SOUTH);
-
-                // Masukkan kotak ini ke dalam wadah utama (panelKatalog)
-                panelKatalog.add(panelItem);
-            }
-
-            // 4. Beritahu UI untuk memperbarui tampilan
-            panelKatalog.revalidate();
-            panelKatalog.repaint();
-
-        } catch (Exception e) {
-            System.out.println("Error saat memuat katalog dinamis: " + e.getMessage());
+            panelItem.add(btnThumb, java.awt.BorderLayout.CENTER);
+            panelItem.add(panelBawah, java.awt.BorderLayout.SOUTH);
+            panelKatalog.add(panelItem);
         }
+        panelKatalog.revalidate();
+        panelKatalog.repaint();
+    }
+    
+    // 1. Cek apakah sudah di-bookmark
+    private boolean isBookmarked(int animeId) {
+        try {
+            java.sql.Connection conn = com.ranime.database.Konek.connect();
+            String sql = "SELECT * FROM bookmarks WHERE user_id=? AND anime_id=?";
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, com.ranime.auth.UserSession.getId());
+            ps.setInt(2, animeId);
+            return ps.executeQuery().next();
+        } catch (Exception e) { return false; }
+    }
+
+    // 2. Simpan ke Database
+    private void simpanBookmark(int animeId) {
+        try {
+            java.sql.Connection conn = com.ranime.database.Konek.connect();
+            String sql = "INSERT INTO bookmarks (user_id, anime_id) VALUES (?, ?)";
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, com.ranime.auth.UserSession.getId());
+            ps.setInt(2, animeId);
+            ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    // 3. Hapus dari Database
+    private void hapusBookmark(int animeId) {
+        try {
+            java.sql.Connection conn = com.ranime.database.Konek.connect();
+            String sql = "DELETE FROM bookmarks WHERE user_id=? AND anime_id=?";
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, com.ranime.auth.UserSession.getId());
+            ps.setInt(2, animeId);
+            ps.executeUpdate();
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     /**
@@ -150,7 +170,7 @@ public class HomePage extends BasePage {
         jPanel1 = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         btnHome = new javax.swing.JLabel();
-        btBbookmarks = new javax.swing.JLabel();
+        btnBookmarks = new javax.swing.JLabel();
         btnWatched = new javax.swing.JLabel();
         btnLogout = new javax.swing.JButton();
         lblUsername = new javax.swing.JLabel();
@@ -171,11 +191,11 @@ public class HomePage extends BasePage {
         btnHome.setForeground(new java.awt.Color(51, 51, 255));
         btnHome.setText("Home");
 
-        btBbookmarks.setForeground(new java.awt.Color(255, 255, 255));
-        btBbookmarks.setText("Bookmarks");
-        btBbookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnBookmarks.setForeground(new java.awt.Color(255, 255, 255));
+        btnBookmarks.setText("Bookmarks");
+        btnBookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btBbookmarksMouseClicked(evt);
+                btnBookmarksMouseClicked(evt);
             }
         });
 
@@ -204,7 +224,7 @@ public class HomePage extends BasePage {
                 .addGap(103, 103, 103)
                 .addComponent(btnHome)
                 .addGap(85, 85, 85)
-                .addComponent(btBbookmarks)
+                .addComponent(btnBookmarks)
                 .addGap(80, 80, 80)
                 .addComponent(btnWatched)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -220,7 +240,7 @@ public class HomePage extends BasePage {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblLogo)
                     .addComponent(btnHome)
-                    .addComponent(btBbookmarks)
+                    .addComponent(btnBookmarks)
                     .addComponent(btnWatched)
                     .addComponent(btnLogout)
                     .addComponent(lblUsername))
@@ -268,7 +288,7 @@ public class HomePage extends BasePage {
         });
 
         // 2. Aksi Navigasi ke Bookmarks
-        btBbookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnBookmarks.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 closePage();
@@ -293,37 +313,24 @@ public class HomePage extends BasePage {
                     javax.swing.JOptionPane.YES_NO_OPTION);
 
             if(pilihan == javax.swing.JOptionPane.YES_OPTION){
-                LoginRegister.UserSession.clear();
+                com.ranime.auth.UserSession.clear();
                 closePage();
-                new LoginRegister.LoginForm().setVisible(true);
+                new com.ranime.auth.LoginForm().setVisible(true);
             }
         });
     }
     
     private void btnLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoutActionPerformed
         // TODO add your handling code here:
-         int pilihan = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin ingin logout?", 
-                "Konfirmasi Logout", 
-                JOptionPane.YES_NO_OPTION);
-
-        if(pilihan == JOptionPane.YES_OPTION){
-            UserSession.clear();
-            this.dispose();
-            new LoginForm().setVisible(true);
-        }
     }//GEN-LAST:event_btnLogoutActionPerformed
 
     private void btnWatchedMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnWatchedMouseClicked
         // TODO add your handling code here:
-        this.dispose(); // tutup register                           
-        new Watched().setVisible(true); // buka form watched
     }//GEN-LAST:event_btnWatchedMouseClicked
 
-    private void btBbookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBbookmarksMouseClicked
+    private void btnBookmarksMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBookmarksMouseClicked
         // TODO add your handling code here:
-        this.dispose(); // tutup register                           
-        new Bookmarks().setVisible(true); // buka form login
-    }//GEN-LAST:event_btBbookmarksMouseClicked
+    }//GEN-LAST:event_btnBookmarksMouseClicked
     
     
     /**
@@ -352,7 +359,7 @@ public class HomePage extends BasePage {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel btBbookmarks;
+    private javax.swing.JLabel btnBookmarks;
     private javax.swing.JLabel btnHome;
     private javax.swing.JButton btnLogout;
     private javax.swing.JLabel btnWatched;

@@ -1,4 +1,4 @@
-package LoginRegister;
+package com.ranime.database;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license

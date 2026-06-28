@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.ranime.player;
+package com.ranime.dao;
 
 /**
  *
  * @author Hype GLK
  */
-import LoginRegister.Konek;
+import com.ranime.database.Konek;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 

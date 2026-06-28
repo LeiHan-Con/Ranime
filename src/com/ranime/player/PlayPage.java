@@ -32,6 +32,8 @@ public class PlayPage extends javax.swing.JFrame {
     private String ekstensi;
     private int currentEps;
     
+    private int idAnime;
+    
     // Variabel untuk Slider Waktu
     private javax.swing.JSlider sliderWaktu;
     private javax.swing.JLabel lblWaktu;
@@ -255,8 +257,12 @@ public class PlayPage extends javax.swing.JFrame {
             int nextEps = currentEps + 1;
             String nextVideoPath = basePath + nextEps + ekstensi;
             
+            // Panggil pencatatan history
+            catatHistory(nextEps);
+            
             // 3. Buka PlayPage baru dengan episode tujuan
             PlayPage pageBaru = new PlayPage(nextVideoPath);
+            pageBaru.setIdAnime(idAnime);
             pageBaru.setJudulPage(judulAnime, nextEps);
             pageBaru.updateInfoAnime(judulAnime, genreAnime, String.valueOf(nextEps), posterPath);
             pageBaru.setVisible(true);
@@ -277,8 +283,11 @@ public class PlayPage extends javax.swing.JFrame {
             int prevEps = currentEps - 1;
             String prevVideoPath = basePath + prevEps + ekstensi;
             
+            catatHistory(prevEps);
+            
             // 3. Buka PlayPage baru dengan episode tujuan
             PlayPage pageBaru = new PlayPage(prevVideoPath);
+            pageBaru.setIdAnime(idAnime);
             pageBaru.setJudulPage(judulAnime, prevEps);
             pageBaru.updateInfoAnime(judulAnime, genreAnime, String.valueOf(prevEps), posterPath);
             pageBaru.setVisible(true);
@@ -356,6 +365,30 @@ public class PlayPage extends javax.swing.JFrame {
         this.judulAnime = judul;
         this.setTitle(judul + " - Episode " + episode);
     }
+    
+    // Ubah method ini agar menerima nomor episode
+    private void catatHistory(int episode) {
+        try {
+            java.sql.Connection conn = com.ranime.database.Konek.connect();
+
+            // Perintah sakti: Insert baru, kalau sudah ada (duplicate), update waktu tontonnya
+            String sql = "INSERT INTO watched (user_id, anime_id, episode_tonton, watched_at) " +
+                         "VALUES (?, ?, ?, NOW()) " +
+                         "ON DUPLICATE KEY UPDATE watched_at = NOW()";
+
+            java.sql.PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, com.ranime.auth.UserSession.getId());
+            ps.setInt(2, this.idAnime);
+            ps.setString(3, String.valueOf(episode));
+            ps.executeUpdate();
+
+            System.out.println("History berhasil diperbarui/disimpan!");
+        } catch (Exception e) { 
+            System.out.println("Gagal catat history: " + e.getMessage()); 
+        }
+    }
+    
+    public void setIdAnime(int id) { this.idAnime = id; }
 
     /**
      * This method is called from within the constructor to initialize the form.

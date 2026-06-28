@@ -62,11 +62,11 @@ public class Watched extends BasePage {
             // Tambahkan w.episode_tonton di bagian SELECT
             // Query ini akan mengambil baris unik berdasarkan user, anime, dan episode
             String sql = "SELECT a.*, w.episode_tonton, MAX(w.watched_at) as last_watched " +
-                         "FROM watched w " +
-                         "JOIN anime a ON w.anime_id = a.id " +
-                         "WHERE w.user_id = ? " +
-                         "GROUP BY w.anime_id, w.episode_tonton " +
-                         "ORDER BY last_watched DESC";
+                        "FROM watched w " +
+                        "JOIN anime a ON w.anime_id = a.id " +
+                        "WHERE w.user_id = ? " +
+                        "GROUP BY w.anime_id, w.episode_tonton " +
+                        "ORDER BY last_watched DESC";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, UserSession.getId());
             ResultSet rs = ps.executeQuery();
@@ -81,10 +81,10 @@ public class Watched extends BasePage {
                 String eps = rs.getString("episode_tonton");
                 
                 // Ambil waktu tonton
-                String waktuTonton = rs.getString("watched_at");
+                String lastWatched = rs.getString("last_watched");
                 
-                if(waktuTonton != null && waktuTonton.length() > 16) {
-                    waktuTonton = waktuTonton.substring(0, 16); // Ambil sampai menit saja
+                if(lastWatched != null && lastWatched.length() > 16) {
+                    lastWatched = lastWatched.substring(0, 16); // Ambil sampai menit saja
                 }
                 
                 // Jika datanya kosong (misal riwayat lama sebelum fitur ini ada), jadikan strip "-"
@@ -106,7 +106,7 @@ public class Watched extends BasePage {
                 String teksLabel = "<html><div style='text-align: center;'>" + 
                                     judul + "<br>" +
                                     "<span style='color: yellow;'>Episode: " + eps + "</span><br>" +
-                                    "<span style='color: lightgray; font-size: 10px;'>Terakhir: " + waktuTonton + "</span>" +
+                                    "<span style='color: lightgray; font-size: 10px;'>Terakhir: " + lastWatched + "</span>" +
                                     "</div></html>";
                 JLabel lbl = new JLabel(teksLabel, SwingConstants.CENTER);
                 lbl.setForeground(Color.WHITE);

@@ -6,12 +6,14 @@
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/HomePage.java</file>
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Bookmarks.java</file>
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Watched.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/WatchedBase.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/dao/WatchedBase.java</file>
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/InfoPage.java</file>
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/PlayPage.java</file>
             <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/VideoPlayer.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/Anime.java</file>
-            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/player/BasePage.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/model/Anime.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/dao/AnimeDAO.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/auth/LoginForm.java</file>
+            <file>file:/D:/NetbeansProject/Clone/Ranime_V3/src/com/ranime/auth/Registerform.java</file>
         </group>
     </open-files>
 </project-private>

@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-
+import javax.swing.ImageIcon;
 import com.ranime.auth.LoginForm;
 import com.ranime.auth.UserSession;
 import com.ranime.database.Konek;
@@ -30,6 +30,12 @@ public class HomePage extends BasePage {
      */
     public HomePage() {
         initComponents();
+       ImageIcon icon = new ImageIcon(
+        getClass().getResource("/Images/Ranime_logo_50x50.png"));
+
+            lblLogo.setIcon(icon);
+            lblLogo.setText("");
+        
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
         
@@ -184,7 +190,7 @@ public class HomePage extends BasePage {
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
         lblLogo.setForeground(new java.awt.Color(255, 255, 255));
-        lblLogo.setText("Logo");
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Ranime_logo_50x50.png"))); // NOI18N
 
         btnHome.setBackground(new java.awt.Color(0, 0, 102));
         btnHome.setFont(new java.awt.Font("Segoe UI Historic", 1, 24)); // NOI18N
@@ -244,7 +250,7 @@ public class HomePage extends BasePage {
                     .addComponent(btnWatched)
                     .addComponent(btnLogout)
                     .addComponent(lblUsername))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jScrollPane1.setHorizontalScrollBar(null);
@@ -269,7 +275,7 @@ public class HomePage extends BasePage {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 624, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
                 .addContainerGap())
         );
 

@@ -24,6 +24,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
 
 public class Watched extends BasePage {
     
@@ -34,6 +35,13 @@ public class Watched extends BasePage {
      */
     public Watched() {
         initComponents();
+        
+          ImageIcon icon = new ImageIcon(
+        getClass().getResource("/Images/Ranime_logo_50x50.png"));
+
+            lblLogo.setIcon(icon);
+            lblLogo.setText("");
+        
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
         
@@ -193,7 +201,7 @@ public class Watched extends BasePage {
         panelHeader.setPreferredSize(new java.awt.Dimension(708, 64));
 
         lblLogo.setForeground(new java.awt.Color(255, 255, 255));
-        lblLogo.setText("Logo");
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Ranime_logo_50x50.png"))); // NOI18N
 
         btnHome.setBackground(new java.awt.Color(0, 0, 102));
         btnHome.setForeground(new java.awt.Color(255, 255, 255));
@@ -258,7 +266,7 @@ public class Watched extends BasePage {
                     .addComponent(lblUsername)
                     .addComponent(btnBookmarks)
                     .addComponent(btnWatched))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jScrollPane1.setBackground(new java.awt.Color(255, 255, 204));

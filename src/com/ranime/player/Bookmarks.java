@@ -29,6 +29,15 @@ public class Bookmarks extends BasePage {
     public Bookmarks() {
         initComponents();
         
+        ImageIcon icon = new ImageIcon(
+        getClass().getResource("/Images/Ranime_logo_50x50.png"));
+
+            lblLogo.setIcon(icon);
+            lblLogo.setText("");
+
+        lblLogo.setIcon(icon);
+        lblLogo.setText("");
+        
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         lblUsername.setText("Selamat Datang, " + UserSession.getUsername());
         
@@ -107,17 +116,8 @@ public class Bookmarks extends BasePage {
                 
                 // --- TAMBAHKAN LOGIKA KLIK DI SINI ---
                 btnThumb.addActionListener(evt -> {
-                    // 1. Catat riwayat tontonan
-                    try {
-                        java.sql.Connection connHist = Konek.connect();
-                        String sqlInsert = "INSERT INTO watched (user_id, anime_id) VALUES (?, ?)";
-                        java.sql.PreparedStatement psInsert = connHist.prepareStatement(sqlInsert);
-                        psInsert.setInt(1, UserSession.getId());
-                        psInsert.setInt(2, idAnime);
-                        psInsert.executeUpdate();
-                    } catch (Exception e) { System.out.println("Gagal mencatat riwayat: " + e.getMessage()); }
 
-                    // 2. Arahkan ke InfoPage
+                    // 1. Arahkan ke InfoPage
                     InfoPage info = new InfoPage();
                     info.muatDataInfo(idAnime, judul, genre, totalEpisode, status, sinopsis, imgPath, folderPath);
                     info.setVisible(true);
@@ -196,7 +196,7 @@ public class Bookmarks extends BasePage {
         jPanel1.setBackground(new java.awt.Color(102, 102, 102));
 
         lblLogo.setForeground(new java.awt.Color(255, 255, 255));
-        lblLogo.setText("Logo");
+        lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Ranime_logo_50x50.png"))); // NOI18N
 
         btnHome.setBackground(new java.awt.Color(0, 0, 102));
         btnHome.setForeground(new java.awt.Color(255, 255, 255));
@@ -261,7 +261,7 @@ public class Bookmarks extends BasePage {
                     .addComponent(btnWatched)
                     .addComponent(btnLogout)
                     .addComponent(lblUsername))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jScrollPane1.setHorizontalScrollBar(null);
